@@ -12,10 +12,8 @@ class Board:
         # TODO -> tirar
         self.board[0][0] = "c"
         self.board[0][1] = "c"
-        self.board[3][4] = "f"
         self.board[2][2] = "f"
-        self.board[3][2] = "a"
-        self.board[2][3] = "a"
+        self.board[3][1] = "f"
         self.board[3][3] = "a"
         self.board[3][0] = "a"
 
@@ -138,6 +136,20 @@ class Board:
             if pos[0] < minX:
                 minX=pos[0]
         return minX
+    
+    def getMostUpCell(self,positions):
+        minY=positions[0][1];
+        for pos in positions:
+            if pos[1] < minY:
+                minY=pos[1]
+        return minY
+    
+    def getMostDownCell(self,positions):
+        maxY=0
+        for pos in positions:
+            if pos[1] > maxY:
+                maxY=pos[1]
+        return maxY
         
     
     def verifyReflexionBlockRight(self,pieceColor):
@@ -203,6 +215,72 @@ class Board:
         print(" reflection")
         return True
     
+    def verifyReflexionBlockUp(self,pieceColor):
+
+        block = self.get_block(pieceColor)
+        nrPieces = len(block[1])
+    
+        indexMostDownCell = self.getMostDownCell(block[1])
+        indexMostUpCell = self.getMostUpCell(block[1])
+        heightBetweenCells = indexMostDownCell-indexMostUpCell;
+        
+        print("indexMostDownCell:"+ str(indexMostDownCell))
+        print("indexMostUpCell:"+ str(indexMostUpCell))
+        
+        #verify if the reflexion is possible
+        if((indexMostDownCell-(2*heightBetweenCells+1))<0):
+            print("No reflection")
+            return False
+        else:
+            #Verify if the destination pieces are available
+            for i in range(nrPieces):
+                piece = block[1][i]   #piece.first -> row, piece.second->col
+                print("piece:"+ str(piece))
+                pieceY = piece[1]
+                print("pieceY:"+ str(pieceY))
+                distToMUC =  pieceY-indexMostUpCell
+                deltaY = (2*distToMUC)+1;
+                destinationCell = self.getPieceColor(piece[0],pieceY-deltaY)
+                if(destinationCell != ' ' or destinationCell=='-'):
+                    print("no reflection")
+                    return False
+        print(" reflection")
+        return True
+    
+    def verifyReflexionBlockDown(self,pieceColor):
+
+        block = self.get_block(pieceColor)
+        nrPieces = len(block[1])
+    
+        indexMostDownCell = self.getMostDownCell(block[1])
+        indexMostUpCell = self.getMostUpCell(block[1])
+        heightBetweenCells = indexMostDownCell-indexMostUpCell;
+        
+        print("indexMostDownCell:"+ str(indexMostDownCell))
+        print("indexMostUpCell:"+ str(indexMostUpCell))
+    
+        #verify if the reflexion is possible
+        if((indexMostUpCell+(2*heightBetweenCells)+1)>=self.height):
+            print("No reflection")
+            return False
+        else:
+            #Verify if the destination pieces are available
+            for i in range(nrPieces):
+                piece = block[1][i]   #piece.first -> row, piece.second->col
+                print("piece:"+ str(piece))
+                pieceY = piece[1]
+                print("pieceY:"+ str(pieceY))
+                distToMDC = indexMostDownCell - pieceY;
+                print("distToMDC:"+ str(distToMDC))
+                deltaY = (2*distToMDC) + 1;
+                print("deltaY:"+ str(deltaY))
+                destinationCell = self.getPieceColor(piece[0],pieceY+deltaY)
+                print("destinationCell:"+ str(destinationCell))
+                if(destinationCell != ' ' or destinationCell=='-'):
+                    print("no reflection")
+                    return False
+        print(" reflection")
+        return True
         
         
 
@@ -212,6 +290,6 @@ board.define_blocks()
 
 print("nr blocos: " + str(len(board.blocks)))
 
-board.verifyReflexionBlockLeft("f")
+board.verifyReflexionBlockDown("f")
 
 board.show()
