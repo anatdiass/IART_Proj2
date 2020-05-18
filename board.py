@@ -15,6 +15,9 @@ class Board:
         self.board[4][4] = "f"
         self.board[2][2] = "f"
         self.board[3][2] = "f"
+        self.board[2][3] = "a"
+        self.board[1][3] = "a"
+        self.board[0][3] = "a"
 
     def borderlines(self):
         string = "   ."
@@ -113,8 +116,9 @@ class Board:
         
     def getPieceColor(self,row,col):
         if row>=0 and col>=0 and row<self.width and col<self.height:
+            print("pieceColor:"+ str(self.board[col][row]))
             return self.board[col][row];
-        else: return "0"
+        else: return '0'
         
     def getMostRightCell(self, positions):
         maxX = 0
@@ -157,6 +161,36 @@ class Board:
         print(" reflection")
         return True
     
+    def verifyReflexionBlockLeft(self,pieceColor):
+
+        block = self.get_block(pieceColor)
+        nrPieces = len(block[1])
+        indexMostRightCell = self.getMostRightCell(block[1])
+        indexMostLeftCell = self.getMostLeftCell(block[1]);
+        compBetweenCells = indexMostRightCell-indexMostLeftCell
+    
+        #verify if the reflexion is possible
+        if (indexMostRightCell-(2*compBetweenCells)+1) < 0:
+            print("No reflection")
+            return False
+        else:
+            #Verify the destination pieces are available
+            for i in range(nrPieces):
+                piece = block[1][i]   #piece.first -> row, piece.second->col
+                pieceColumn = piece[0]
+                print("pieceColumn:"+ str(pieceColumn))
+                distToMLC =  pieceColumn-indexMostLeftCell
+                print("indexMostLeftCell:"+ str(indexMostLeftCell))
+                deltaX = abs((2*distToMLC)+1)
+                print("deltaX:"+ str(deltaX))
+                print("Cena:"+ str(pieceColumn-deltaX))
+                destinationCell = self.getPieceColor(piece[0],pieceColumn-deltaX)
+                if destinationCell != ' ' or destinationCell=='-' or destinationCell=='0':
+                    print("no reflection")
+                    return False
+        print(" reflection")
+        return True
+    
         
         
 
@@ -166,6 +200,6 @@ board.define_blocks()
 
 print("nr blocos: " + str(len(board.blocks)))
 
-board.verifyReflexionBlockRight("c")
+board.verifyReflexionBlockRight("a")
 
 board.show()
