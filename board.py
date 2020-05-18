@@ -4,28 +4,27 @@ class Board:
         self.height = height
         self.board = [[" " for y in range(height)] for x in range(width)]
         self.blocks = []
-        #     vector<pair<char,vector<pair<int,int>>>>blocks;
 
     def create(self):
         for y in range(self.height):
             for x in range(self.width):
                 self.board[x][y] = " "
-
+        # TODO -> tirar
         self.board[0][0] = "c"
+        self.board[0][1] = "c"
         self.board[4][4] = "f"
         self.board[2][2] = "f"
+        self.board[3][2] = "f"
 
     def borderlines(self):
         string = "   ."
         for i in range(self.width):
             string += "_____."
-
         print(string)
 
     def x_indexes(self):
         print("\n ")
         string = ""
-
         for i in range(self.width):
             string += "     "
             string += str(i)
@@ -56,8 +55,8 @@ class Board:
 
     def block_exists(self, index_char):
         for i in range(len(self.blocks)):
-            for a in self.blocks[i]:
-                if a == index_char:
+            for color in self.blocks[i]:
+                if color == index_char:
                     return True
         return False
 
@@ -69,7 +68,6 @@ class Board:
                 cell_content = self.get_color(x, y)
                 if cell_content == index_char:
                     pos = (x, y)
-                    # print("AQUI: " + str(x) + "/" + str(y))
                     positions.append(pos)
         new_block = (index_char, positions)
         blocks.append(new_block)
@@ -85,13 +83,12 @@ class Board:
 
     def update_block(self, index_char, x, y):
         for i in range(len(self.blocks)):
-            for a, positions in self.blocks[i]:
-                if a == index_char:
+            for color in self.blocks[i]:
+                if color == index_char:
                     pos = (x, y)
-                    if not self.exist_position_block(positions, x, y):
-                        cur_pos = positions
-                        cur_pos.append(pos)
-                        self.blocks[i] = (index_char, cur_pos)
+                    block_positions = [x[1] for x in self.blocks if x[0] == index_char]
+                    if not self.exist_position_block(block_positions, x, y):
+                        [x[1] for x in self.blocks if x[0] == index_char].append(pos)
 
     def define_blocks(self):
         for y in range(self.height):
@@ -103,6 +100,17 @@ class Board:
                     else:
                         self.update_block(cell_content, x, y)
 
+    def get_block(self, block_color):
+        if self.block_exists(block_color):
+            for i in range(len(self.blocks)):
+                for color in self.blocks[i]:
+                    if color == block_color:
+                        return self.blocks[i]
+
+    def get_blocks_colors(self):
+        for i in range(len(self.blocks)):
+            return [k[0] for k in self.blocks]
+
 
 board = Board(5, 5)
 board.create()
@@ -110,9 +118,25 @@ board.define_blocks()
 
 print("nr blocos: " + str(len(board.blocks)))
 
-if board.block_exists("f"):
-    print("sim")
-if not board.block_exists("d"):
-    print("nao")
+print("all blocks: ")
+print(board.blocks)
+
+test = board.get_block("f")
+print("Bloco f: ")
+print(test)
+
+# EXPECTED : NONE
+test2 = board.get_block("g")
+print("Bloco g: ")
+print(test2)
+
+test3 = board.get_block("c")
+print("Bloco c: ")
+print(test3)
+
+# EXPECTED : ['c','f']
+all_colors = board.get_blocks_colors()
+print("All colors: ")
+print(all_colors)
 
 board.show()
