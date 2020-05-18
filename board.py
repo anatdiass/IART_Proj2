@@ -12,12 +12,12 @@ class Board:
         # TODO -> tirar
         self.board[0][0] = "c"
         self.board[0][1] = "c"
-        self.board[4][4] = "f"
+        self.board[3][4] = "f"
         self.board[2][2] = "f"
-        self.board[3][2] = "f"
+        self.board[3][2] = "a"
         self.board[2][3] = "a"
-        self.board[1][3] = "a"
-        self.board[0][3] = "a"
+        self.board[3][3] = "a"
+        self.board[3][0] = "a"
 
     def borderlines(self):
         string = "   ."
@@ -115,9 +115,13 @@ class Board:
             return [k[0] for k in self.blocks]
         
     def getPieceColor(self,row,col):
+        #print("row:"+ str(row))
+        #print("col:"+ str(col))
+        #print("self.width-1:"+ str(self.width-1))
+        #print("self.height-1:"+ str(self.height-1))
         if row>=0 and col>=0 and row<self.width and col<self.height:
-            print("pieceColor:"+ str(self.board[col][row]))
-            return self.board[col][row];
+            print("pieceColor:"+ str(self.board[row][col]))
+            return self.board[row][col];
         else: return '0'
         
     def getMostRightCell(self, positions):
@@ -140,10 +144,12 @@ class Board:
         block = self.get_block(pieceColor)
         nrPieces = len(block[1])
         indexMostRightCell = self.getMostRightCell(block[1])
+        print("indexMostRightCell:"+ str(indexMostRightCell))
         indexMostLeftCell = self.getMostLeftCell(block[1]);
+        print("indexMostLeftCell:"+ str(indexMostLeftCell))
         compBetweenCells = indexMostRightCell-indexMostLeftCell
-        
-        if (indexMostLeftCell+(2*compBetweenCells)+1) >= self.height:
+        print("width:"+ str(self.width))
+        if (indexMostLeftCell+(2*compBetweenCells)+1) >= self.width:
             print("No reflection")
             return False
         
@@ -151,10 +157,15 @@ class Board:
             #Verify the destination pieces are available
             for i in range(nrPieces):
                 piece = block[1][i]   #piece.first -> row, piece.second->col
-                pieceColumn = piece[1]
-                distToMRC = indexMostRightCell - pieceColumn
+                print("piece:"+ str(piece))
+                pieceX = piece[0]
+                print("pieceRow:"+ str(pieceX))
+                distToMRC = indexMostRightCell - pieceX
+                print("distToMRC:"+ str(distToMRC))
                 deltaX = abs((2*distToMRC) + 1)
-                destinationCell = self.getPieceColor(piece[0],pieceColumn+deltaX)
+                print("deltaX:"+ str(deltaX))
+                destinationCell = self.getPieceColor(pieceX+deltaX,piece[1])
+                print("destinationCell:"+ str(destinationCell))
                 if destinationCell != ' ' or destinationCell=='-':
                     print("no reflection")
                     return False
@@ -177,15 +188,16 @@ class Board:
             #Verify the destination pieces are available
             for i in range(nrPieces):
                 piece = block[1][i]   #piece.first -> row, piece.second->col
-                pieceColumn = piece[0]
-                print("pieceColumn:"+ str(pieceColumn))
-                distToMLC =  pieceColumn-indexMostLeftCell
+                print("piece:"+ str(piece))
+                pieceX = piece[0]
+                print("pieceRow:"+ str(pieceX))
+                distToMLC =  pieceX-indexMostLeftCell
                 print("indexMostLeftCell:"+ str(indexMostLeftCell))
                 deltaX = abs((2*distToMLC)+1)
                 print("deltaX:"+ str(deltaX))
-                print("Cena:"+ str(pieceColumn-deltaX))
-                destinationCell = self.getPieceColor(piece[0],pieceColumn-deltaX)
-                if destinationCell != ' ' or destinationCell=='-' or destinationCell=='0':
+                print("Cena:"+ str(pieceX-deltaX))
+                destinationCell = self.getPieceColor(pieceX-deltaX,piece[1])
+                if destinationCell != ' ' or destinationCell=='-' :
                     print("no reflection")
                     return False
         print(" reflection")
@@ -194,12 +206,12 @@ class Board:
         
         
 
-board = Board(5, 5)
+board = Board(6, 5)
 board.create()
 board.define_blocks()
 
 print("nr blocos: " + str(len(board.blocks)))
 
-board.verifyReflexionBlockRight("a")
+board.verifyReflexionBlockLeft("f")
 
 board.show()
