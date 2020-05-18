@@ -112,14 +112,13 @@ class Board:
         for i in range(len(self.blocks)):
             return [k[0] for k in self.blocks]
         
+    def setPiece(self,row,col,color):
+        if(row>=0 and col>=0 and row<self.width and col<self.height):
+            self.board[row][col] = color
+        
     def getPieceColor(self,row,col):
-        #print("row:"+ str(row))
-        #print("col:"+ str(col))
-        #print("self.width-1:"+ str(self.width-1))
-        #print("self.height-1:"+ str(self.height-1))
         if row>=0 and col>=0 and row<self.width and col<self.height:
-            print("pieceColor:"+ str(self.board[row][col]))
-            return self.board[row][col];
+            return self.board[row][col]
         else: return '0'
         
     def getMostRightCell(self, positions):
