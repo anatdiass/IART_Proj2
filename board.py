@@ -280,8 +280,58 @@ class Board:
                     return False
         print(" reflection")
         return True
-        
-        
+    
+    def reflexionBlockRight(self,pieceColor):
+
+        block = self.get_block(pieceColor)
+        nrPieces = len(block[1])
+        indexMostRightCell = self.getMostRightCell(block[1])
+    
+        for i in range(nrPieces):
+            piece = block[1][i]  #piece.first -> row, piece.second->col
+            pieceX = piece[0]
+            distToMRC = indexMostRightCell - pieceX
+            deltaX = (2*distToMRC) + 1
+            self.setPiece(pieceX+deltaX,piece[1], pieceColor)
+            
+    def reflexionBlockLeft(self,pieceColor):
+
+        block = self.get_block(pieceColor)
+        nrPieces = len(block[1])
+        indexMostLeftCell = self.getMostLeftCell(block[1]);
+    
+        for i in range(nrPieces):
+            piece = block[1][i]  #piece.first -> row, piece.second->col
+            pieceX = piece[0]
+            distToMLC =  pieceX-indexMostLeftCell;
+            deltaX = (2*distToMLC)+1
+            self.setPiece(pieceX-deltaX,piece[1], pieceColor)
+    
+    def reflexionBlockUp(self, pieceColor):
+        block = self.get_block(pieceColor)
+        nrPieces = len(block[1])
+    
+        indexMostUpCell = self.getMostUpCell(block[1])
+    
+        for i in range(nrPieces):
+            piece = block[1][i]  #piece.first -> row, piece.second->col
+            pieceY = piece[1]
+            distToMUC =  pieceY-indexMostUpCell
+            deltaY = (2*distToMUC)+1
+            self.setPiece(piece[0], pieceY-deltaY, pieceColor)
+    
+    def reflexionBlockDown(self, pieceColor):
+        block = self.get_block(pieceColor)
+        nrPieces = len(block[1])
+    
+        indexMostDownCell = self.getMostDownCell(block[1])
+    
+        for i in range(nrPieces):
+            piece = block[1][i]  #piece.first -> row, piece.second->col
+            pieceY = piece[1]
+            distToMUC =  indexMostDownCell - pieceY
+            deltaY = (2*distToMUC)+1
+            self.setPiece(piece[0], pieceY+deltaY, pieceColor)
 
 board = Board(6, 5)
 board.create()
@@ -289,6 +339,6 @@ board.define_blocks()
 
 print("nr blocos: " + str(len(board.blocks)))
 
-board.verifyReflexionBlockDown("f")
+board.reflexionBlockDown("c")
 
 board.show()
