@@ -110,7 +110,55 @@ class Board:
     def get_blocks_colors(self):
         for i in range(len(self.blocks)):
             return [k[0] for k in self.blocks]
-
+        
+    def getPieceColor(self,row,col):
+        if row>=0 and col>=0 and row<self.width and col<self.height:
+            return self.board[col][row];
+        else: return "0"
+        
+    def getMostRightCell(self, positions):
+        maxX = 0
+        for pos in positions:
+            if pos[0] > maxX:
+                maxX=pos[0]
+        return maxX
+    
+    
+    def getMostLeftCell(self,positions):
+        minX=positions[0][0]
+        for pos in positions:
+            if pos[0] < minX:
+                minX=pos[0]
+        return minX
+        
+    
+    def verifyReflexionBlockRight(self,pieceColor):
+        block = self.get_block(pieceColor)
+        nrPieces = len(block[1])
+        indexMostRightCell = self.getMostRightCell(block[1])
+        indexMostLeftCell = self.getMostLeftCell(block[1]);
+        compBetweenCells = indexMostRightCell-indexMostLeftCell
+        
+        if (indexMostLeftCell+(2*compBetweenCells)+1) >= self.height:
+            print("No reflection")
+            return False
+        
+        else:
+            #Verify the destination pieces are available
+            for i in range(nrPieces):
+                piece = block[1][i]   #piece.first -> row, piece.second->col
+                pieceColumn = piece[1]
+                distToMRC = indexMostRightCell - pieceColumn
+                deltaX = abs((2*distToMRC) + 1)
+                destinationCell = self.getPieceColor(piece[0],pieceColumn+deltaX)
+                if destinationCell != ' ' or destinationCell=='-':
+                    print("no reflection")
+                    return False
+        print(" reflection")
+        return True
+    
+        
+        
 
 board = Board(5, 5)
 board.create()
@@ -118,25 +166,6 @@ board.define_blocks()
 
 print("nr blocos: " + str(len(board.blocks)))
 
-print("all blocks: ")
-print(board.blocks)
-
-test = board.get_block("f")
-print("Bloco f: ")
-print(test)
-
-# EXPECTED : NONE
-test2 = board.get_block("g")
-print("Bloco g: ")
-print(test2)
-
-test3 = board.get_block("c")
-print("Bloco c: ")
-print(test3)
-
-# EXPECTED : ['c','f']
-all_colors = board.get_blocks_colors()
-print("All colors: ")
-print(all_colors)
+board.verifyReflexionBlockRight("c")
 
 board.show()
