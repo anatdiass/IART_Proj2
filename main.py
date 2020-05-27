@@ -4,8 +4,22 @@ Created on Wed May 27 17:57:40 2020
 
 @author: Maria Caldeira
 """
-import FoldingBlocks
-import Agent
+from foldingblocks import FoldingBlocks
+from agent import Agent 
 
-game = FoldingBlocks()
-agent = Agent(game)
+
+def play():
+        game = FoldingBlocks()
+        agent = Agent(game)
+
+       # history = agent.train(10000)
+        print('After 10000 Episodes')
+
+        # agent.stats()
+
+def main():
+    play()
+
+
+if __name__ == '__main__':
+    main()

@@ -9,7 +9,7 @@ import json
 import sys
 
 class Agent(object):
-    def __init__(self, game, q_table=dict(), player=(" ", 0), learning_rate=5e-1, discount=9e-1, epsilon=5e-1):
+    def __init__(self, game, q_table=dict(), learning_rate=5e-1, discount=9e-1, epsilon=5e-1):
         """Initialize agent with properties
         - qtable is json table with Q values Q(s,a)
         - game is reference to game being played
@@ -20,7 +20,7 @@ class Agent(object):
         """
         self.game = game
         self.q_table = q_table
-        self.player = player
+        self.player = game.player
         self.learning_rate = learning_rate
         self.discount = discount
         self.epsilon = epsilon
@@ -126,7 +126,7 @@ class Agent(object):
             i = self.optimal_next(future_states)
             future_val = self.qvalue(future_states[i])
         # Q-value update
-        self.qtable[state] = ((1 - self.learning_rate) * self.qvalue(state)) + (self.learning_rate * (reward + self.discount * future_val))
+        self.q_table[state] = ((1 - self.learning_rate) * self.qvalue(state)) + (self.learning_rate * (reward + self.discount * future_val))
 
     def train(self, episodes, history=[]):
         """Trains by playing against self.
@@ -149,7 +149,7 @@ class Agent(object):
                     self.game.reset()
             total_reward += episode_reward
             cumulative_reward.append(total_reward)
-            memory.append(sys.getsizeof(self.qtable) / 1024)
+            memory.append(sys.getsizeof(self.q_table) / 1024)
             # Record total reward agent gains as training progresses
             if (i % (episodes / 10) == 0) and (i >= (episodes / 10)):
                 print('.')
@@ -188,7 +188,7 @@ class Agent(object):
     def save_values(self, path='data/qtable.json'):
         """Save Q values to json."""
         with open(path, 'w') as out:
-            json.dump(self.qtable, out)
+            json.dump(self.q_table, out)
 
     def demo(self, first=True):
         """Demo so users can play against trained agent."""

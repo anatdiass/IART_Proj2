@@ -473,13 +473,14 @@ class FoldingBlocks():
 
         return True
 
+"""
 fold = FoldingBlocks()
 fold.print_instructions()
 fold.print_board()
 
 #next_moves = fold.get_next_valid_moves()
 #print("next moves: " + str(next_moves))
-
+"""
 """ TEST INPUT """
 # print("Color: ")
 # color = fold.read_color()
