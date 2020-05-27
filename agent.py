@@ -40,3 +40,12 @@ class Agent():
             if v == vmax:
                 max_indices.append(i)
         return np.random.choice(max_indices)
+    
+    def argmin(self, values):
+        """Returns index of min value."""
+        vmin = np.min(values)
+        min_indices = []
+        for i, v in enumerate(values):
+            if v == vmin:
+                min_indices.append(i)
+        return np.random.choice(min_indices)
