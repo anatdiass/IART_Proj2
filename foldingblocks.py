@@ -301,13 +301,12 @@ class FoldingBlocks():
             self.set_piece(piece[0], piece_y + delta_y, piece_color)
 
     def get_state(self, board):
-        state = ""
+        state = []
         for y in range(self.height):
+            row = []
             for x in range(self.width):
-                if board[x][y] == " ":
-                    state += "-"
-                else:
-                    state += board[x][y]
+                row.append(board[x][y])
+            state.append(row)
         return state
 
     def get_block_next_valid_moves(self, color):
@@ -343,7 +342,6 @@ class FoldingBlocks():
 
         for i in range(len(all_moves)):
             for block_move in all_moves[i]:
-                print(block_move)
                 if block_move[0] == color:
                     block_positions = [x[1] for x in all_moves if x[0] == color]
                     if move in block_positions[0]:
@@ -399,6 +397,37 @@ class FoldingBlocks():
         ch = sys.stdin.read(1)
         return ch
 
+    def get_open_moves(self):
+        actions = self.get_next_valid_moves()
+        states = []
+        temp_board = self.board
+        states = self.get_state(temp_board)
+        print("states: " + str(states))
+
+        for i in range(len(actions)):
+            for action in actions[i]:
+                color = action[0]
+                moves_list = [x[1] for x in actions if x[0] == color]
+                for j in range(len(moves_list)):
+                    moves = moves_list[j]
+                    for k in range(len(moves)):
+                        move = moves[k]
+                       # print("color: " + str(color))
+                       # print("moves: " + str(moves))
+                       # print("move: " + str(move))
+                        self.make_move(color,move)
+                       # print("NOVO BOARD")
+                        self.print_board()
+                        #states.append(self.get_state(self.board))
+                        print(str(states))
+                        self.board = temp_board
+                       # print("RESET BOARD")
+                        self.print_board()
+        self.board = temp_board
+        self.print_board()
+        valid = self.get_next_valid_moves()
+
+
 
 fold = FoldingBlocks()
 
@@ -413,16 +442,19 @@ print("next moves: " + str(next_moves))
 
 fold.make_move("R",1)
 fold.print_board()
-print("Color: ")
-color = fold.read_color()
-print("Color choosen:" + color)
-print("Move: ")
-sys.stdin.flush()
-move = int(fold.read_input())
-fold.make_move(color, move)
-fold.print_board()
+# print("Color: ")
+# color = fold.read_color()
+# print("Color choosen:" + color)
+# print("Move: ")
+# sys.stdin.flush()
+# move = int(fold.read_input())
+# fold.make_move(color, move)
+# fold.print_board()
 
+#fold.get_open_moves()
 
+state = fold.get_state(fold.board)
+print(state)
 # fold.make_move(3)
 # state2 = fold.get_state(fold.board)
 # print("State: " + state2)
