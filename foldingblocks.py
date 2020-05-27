@@ -477,8 +477,8 @@ fold = FoldingBlocks()
 fold.print_instructions()
 fold.print_board()
 
-next_moves = fold.get_next_valid_moves()
-print("next moves: " + str(next_moves))
+#next_moves = fold.get_next_valid_moves()
+#print("next moves: " + str(next_moves))
 
 """ TEST INPUT """
 # print("Color: ")
@@ -491,7 +491,7 @@ print("next moves: " + str(next_moves))
 # fold.print_board()
 
 """ TEST OPEN MOVES """
-fold.get_open_moves()
+#fold.get_open_moves()
 
 """ TEST PLAYER DEFINITION """
 # fold.first_color_with_moves()
