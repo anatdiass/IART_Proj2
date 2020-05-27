@@ -415,9 +415,68 @@ class FoldingBlocks():
         ch = sys.stdin.read(1)
         return ch
 
+    def redefine_board(self, new_board):
+        self.board = new_board
+
+    def show(self, board):
+        self.x_indexes()
+        self.borderlines()
+        for y in range(self.height):
+            line = ""
+            line += str(y)
+
+            for x in range(self.width):
+                if x < 10:
+                    line += "  |  "
+                else:
+                    line += " |"
+                line += str(board[x][y])
+            line += "  |"
+            print(line)
+            self.borderlines()
+
     def get_open_moves(self):
         actions = self.get_next_valid_moves()
         states = []
+
+        # Preserves "initial" board in init_board
+        init_board = [[" " for y in range(self.height)] for x in range(self.width)]
+        
+        for y in range(self.height):
+            for x in range(self.width):
+                init_board[x][y] = self.board[x][y]
+        
+
+        for i in range(len(actions)):
+            action = actions[i]
+            print("action: " + str(action))
+            color = action[0]
+            print("\tcolor: " + str(color))
+            moves = action[1]
+            print("\tpositions: " + str(moves))
+            while len(moves)>0:
+                print("moves: " + str(moves))
+                move = moves[0]
+                print("\n\nCOLOR: " + str(color))
+                print("MOVE: " + str(move))
+
+                print("\n***** ORIGIN BOARD *****")
+                self.print_board()
+
+                self.make_move(color, move)
+                print("color: " + str(color) + "\tmove: " + str(move))
+                moves.pop(0)
+
+                print("\n***** RESULT BOARD *****")
+                self.print_board()
+
+                self.redefine_board(init_board)
+
+                print("\n***** RESET BOARD *****")
+                self.print_board()
+            self.redefine_board(init_board)
+        self.redefine_board(init_board)
+
 
         return states, actions
 
@@ -443,9 +502,10 @@ print("State: " + str(state))
 # fold.print_board()
 
 """ TEST OPEN MOVES """
-#fold.get_open_moves()
+fold.get_open_moves()
 
-fold.first_color_with_moves()
-define_player = fold.player
-print("Player: " + str(define_player))
+""" TEST PLAYER DEFINITION """
+# fold.first_color_with_moves()
+# define_player = fold.player
+# print("Player: " + str(define_player))
 
