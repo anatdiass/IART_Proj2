@@ -49,3 +49,27 @@ class Agent():
             if v == vmin:
                 min_indices.append(i)
         return np.random.choice(min_indices)
+    
+    def step(self, verbose=False):
+        """Agent makes one step.
+        - Deciding optimal or random action following e-greedy strategy given current state
+        - Taking selected action and observing next state
+        - Calculating immediate reward of taking action, current state, and next state
+        - Updating q table values using GD with derivative of MSE of Q-value
+        - Returns game status
+        """
+        oldBoard = [pos for pos in self.game.board]
+        state, action = self.next_move()
+        winner = self.game.make_move(action)
+        reward = self.reward(winner)
+        self.update(reward, winner, state)
+        if verbose:
+            print("=========")
+            print(oldBoard)
+            print(action)
+            print(winner)
+            print(state)
+            print('Q value: {}'.format(self.qvalue(state)))
+            self.game.print_board()
+            print(reward)
+        return (winner, reward)
