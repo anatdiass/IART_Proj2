@@ -8,8 +8,7 @@ import numpy as np
 import json
 import sys
 
-#class Agent(object):
-class Agent():
+class Agent(object):
     def __init__(self, game, q_table=dict(), player=(" ", 0), learning_rate=5e-1, discount=9e-1, epsilon=5e-1):
         """Initialize agent with properties
         - qtable is json table with Q values Q(s,a)
