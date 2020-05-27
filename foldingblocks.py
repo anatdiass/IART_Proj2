@@ -8,12 +8,26 @@ class FoldingBlocks():
         self.height = 5
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.blocks = []
+        self.player = (" ", 0)  #(color, move)
         self.winner = None
         self.create()
 
     def reset(self):
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.winner = None
+        self.player = (" ", 0)  #(color, move)
+
+    def first_color_with_moves(self):
+        all_moves = self.get_next_valid_moves()
+        if len(all_moves)>0:
+            first = all_moves[0]
+            color = first[0]
+            positions = first[1]
+            first_pos = positions[0]
+
+        return color, first_pos
+
+            
 
     def create(self):
         for y in range(self.height):
@@ -26,6 +40,10 @@ class FoldingBlocks():
         self.board[0][3] = "R"
         self.board[0][0] = "A"
         self.define_blocks()
+        
+        first_color = self.first_color_with_moves()[0]
+        first_move = self.first_color_with_moves()[1]
+        self.player = (first_color, first_move)
 
     def borderlines(self):
         string = "   ."
@@ -400,48 +418,21 @@ class FoldingBlocks():
     def get_open_moves(self):
         actions = self.get_next_valid_moves()
         states = []
-        temp_board = self.board
-        states = self.get_state(temp_board)
-        print("states: " + str(states))
 
-        for i in range(len(actions)):
-            for action in actions[i]:
-                color = action[0]
-                moves_list = [x[1] for x in actions if x[0] == color]
-                for j in range(len(moves_list)):
-                    moves = moves_list[j]
-                    for k in range(len(moves)):
-                        move = moves[k]
-                       # print("color: " + str(color))
-                       # print("moves: " + str(moves))
-                       # print("move: " + str(move))
-                        self.make_move(color,move)
-                       # print("NOVO BOARD")
-                        self.print_board()
-                        #states.append(self.get_state(self.board))
-                        print(str(states))
-                        self.board = temp_board
-                       # print("RESET BOARD")
-                        self.print_board()
-        self.board = temp_board
-        self.print_board()
-        valid = self.get_next_valid_moves()
+        return states, actions
 
 
 
 fold = FoldingBlocks()
-
 fold.print_instructions()
-
 fold.print_board()
-state = fold.get_state(fold.board)
-# print("State: " + state)
 
 next_moves = fold.get_next_valid_moves()
 print("next moves: " + str(next_moves))
+state = fold.get_state(fold.board)
+print("State: " + str(state))
 
-fold.make_move("R",1)
-fold.print_board()
+""" TEST INPUT """
 # print("Color: ")
 # color = fold.read_color()
 # print("Color choosen:" + color)
@@ -451,12 +442,10 @@ fold.print_board()
 # fold.make_move(color, move)
 # fold.print_board()
 
+""" TEST OPEN MOVES """
 #fold.get_open_moves()
 
-state = fold.get_state(fold.board)
-print(state)
-# fold.make_move(3)
-# state2 = fold.get_state(fold.board)
-# print("State: " + state2)
-# print("\n\nBOARD\n")
-# fold.print_board()
+fold.first_color_with_moves()
+define_player = fold.player
+print("Player: " + str(define_player))
+
