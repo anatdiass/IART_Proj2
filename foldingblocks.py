@@ -104,7 +104,6 @@ class FoldingBlocks():
                     block_positions = [x[1] for x in self.blocks if x[0] == index_char][0]
                     if not self.exist_position_block(block_positions, x_pos, y):
                         [x[1] for x in self.blocks if x[0] == index_char][0].append(pos)
-                        print(str(self.blocks))
 
     def define_blocks(self):
         for y in range(self.height):
@@ -382,10 +381,12 @@ class FoldingBlocks():
             '=======================================================\n') 
 
     def read_input(self):
-        return int(sys.stdin.readline()[:-1])
+        sys.stdin.flush()
+        return (sys.stdin.read(2))
 
     def read_color(self):
-        return (sys.stdin.read(1))
+        ch = sys.stdin.read(1)
+        return ch
 
 fold = FoldingBlocks()
 
@@ -400,11 +401,12 @@ print("next moves: " + str(next_moves))
 
 fold.make_move("R",1)
 fold.print_board()
-print("Color")
+print("Color: ")
 color = fold.read_color()
-print("Color choosen:" + color)
+# print("Color choosen:" + color)
 print("Move: ")
-move = fold.read_input()
+sys.stdin.flush()
+move = int(fold.read_input())
 fold.make_move("R", move)
 fold.print_board()
 
