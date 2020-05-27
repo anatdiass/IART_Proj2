@@ -16,6 +16,7 @@ class FoldingBlocks():
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.winner = None
         self.player = (" ", 0)  #(color, move)
+        self.create()
 
     def first_color_with_moves(self):
         all_moves = self.get_next_valid_moves()
@@ -124,6 +125,15 @@ class FoldingBlocks():
                     if not self.exist_position_block(block_positions, x_pos, y):
                         [x[1] for x in self.blocks if x[0] == index_char][0].append(pos)
 
+    def remove_from_block(self,x,y):
+        for i in range(len(self.blocks)):
+            block = self.blocks[i]
+            positions = block[1]
+            for j in range(len(positions)):
+                position = positions[j]
+                if position[0] == x and position[1] == y:
+                    self.blocks[i][1].remove(position)
+
     def define_blocks(self):
         for y in range(self.height):
             for x in range(self.width):
@@ -133,6 +143,8 @@ class FoldingBlocks():
                         self.create_block(cell_content)
                     else:
                         self.update_block(cell_content, x, y)
+                else:
+                    self.remove_from_block(x,y)
 
     def get_block(self, block_color):
         if self.block_exists(block_color):
@@ -438,45 +450,17 @@ class FoldingBlocks():
     def get_open_moves(self):
         actions = self.get_next_valid_moves()
         states = []
-
-        # Preserves "initial" board in init_board
-        init_board = [[" " for y in range(self.height)] for x in range(self.width)]
-        
-        for y in range(self.height):
-            for x in range(self.width):
-                init_board[x][y] = self.board[x][y]
-        
-
+    
         for i in range(len(actions)):
             action = actions[i]
-            print("action: " + str(action))
             color = action[0]
-            print("\tcolor: " + str(color))
             moves = action[1]
-            print("\tpositions: " + str(moves))
-            while len(moves)>0:
-                print("moves: " + str(moves))
-                move = moves[0]
-                print("\n\nCOLOR: " + str(color))
-                print("MOVE: " + str(move))
-
-                print("\n***** ORIGIN BOARD *****")
-                self.print_board()
-
+            for i in range(len(moves)):
+                move = moves[i]
                 self.make_move(color, move)
-                print("color: " + str(color) + "\tmove: " + str(move))
-                moves.pop(0)
-
-                print("\n***** RESULT BOARD *****")
-                self.print_board()
-
-                self.redefine_board(init_board)
-
-                print("\n***** RESET BOARD *****")
-                self.print_board()
-            self.redefine_board(init_board)
-        self.redefine_board(init_board)
-
+                st = self.get_state(self.board)
+                states.append(st)
+                self.reset()
 
         return states, actions
 
@@ -495,8 +479,6 @@ fold.print_board()
 
 next_moves = fold.get_next_valid_moves()
 print("next moves: " + str(next_moves))
-state = fold.get_state(fold.board)
-print("State: " + str(state))
 
 """ TEST INPUT """
 # print("Color: ")
@@ -509,15 +491,15 @@ print("State: " + str(state))
 # fold.print_board()
 
 """ TEST OPEN MOVES """
-#fold.get_open_moves()
+fold.get_open_moves()
 
 """ TEST PLAYER DEFINITION """
 # fold.first_color_with_moves()
 # define_player = fold.player
 # print("Player: " + str(define_player))
 
-if fold.is_win():
-    print("victory")
+"""if fold.is_win():
+   print("victory")
 else:
     print("not victory")
 
@@ -532,4 +514,4 @@ fold.print_board()
 if fold.is_win():
     print("victory")
 else:
-    print("not victory")
+    print("not victory")"""
