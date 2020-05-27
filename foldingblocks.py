@@ -480,7 +480,14 @@ class FoldingBlocks():
 
         return states, actions
 
+    def is_win(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                cell = self.board[x][y]
+                if cell == ' ':
+                    return False
 
+        return True
 
 fold = FoldingBlocks()
 fold.print_instructions()
@@ -502,10 +509,27 @@ print("State: " + str(state))
 # fold.print_board()
 
 """ TEST OPEN MOVES """
-fold.get_open_moves()
+#fold.get_open_moves()
 
 """ TEST PLAYER DEFINITION """
 # fold.first_color_with_moves()
 # define_player = fold.player
 # print("Player: " + str(define_player))
 
+if fold.is_win():
+    print("victory")
+else:
+    print("not victory")
+
+fold.make_move("A", 1)
+fold.make_move("A", 1)
+fold.make_move("A", 3)
+fold.make_move("R", 1)
+fold.make_move("R", 1)
+fold.make_move("R", 4)
+
+fold.print_board()
+if fold.is_win():
+    print("victory")
+else:
+    print("not victory")
