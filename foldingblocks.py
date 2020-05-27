@@ -40,6 +40,7 @@ class FoldingBlocks():
         self.height = 4
         self.board[0][3] = "R"
         self.board[0][0] = "A"
+        self.board[2][2] = "C"
         self.define_blocks()
         
         first_color = self.first_color_with_moves()[0]

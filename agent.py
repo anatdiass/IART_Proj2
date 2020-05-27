@@ -31,25 +31,34 @@ class Agent(object):
             self.q_table[state] = 0.0
         return self.q_table[state]
 
-    def argmax(self, values):
-        """Returns index of max value."""
-        vmax = np.max(values)
-        max_indices = []
-        for i, v in enumerate(values):
-            if v == vmax:
-                max_indices.append(i)
-        return np.random.choice(max_indices)
-    
-    def argmin(self, values):
-        """Returns index of min value."""
-        vmin = np.min(values)
-        min_indices = []
-        for i, v in enumerate(values):
-            if v == vmin:
-                min_indices.append(i)
-        return np.random.choice(min_indices)
-    
-    def step(self, verbose=False):
+    def choose_max_state(self, values):
+        return np.random.choice(values)
+
+    def get_action_move(self, actions, state_index):
+        prev_sum = 0
+        sum = 0
+        for i in range(len(actions)):
+            prev_sum = sum
+            action = actions[i]
+            moves = action[1]
+            n_moves = len(moves)
+            sum = sum + len(moves)
+            if state_index>prev_sum and state_index<=sum:
+                action_index = i
+                for j in range(n_moves):
+                    ret_move = moves[state_index - prev_sum - 1]
+        return action_index, ret_move
+
+    def count_pieces_state(self, state):
+        count = 0
+        for i in range(len(state)):
+            for j in range(len(state[i])):
+                pos = state[i][j]
+                if(pos != " "):
+                    count = count + 1
+        return count
+
+    def step(self, verbose=True):
         """Agent makes one step.
         - Deciding optimal or random action following e-greedy strategy given current state
         - Taking selected action and observing next state
@@ -57,31 +66,44 @@ class Agent(object):
         - Updating q table values using GD with derivative of MSE of Q-value
         - Returns game status
         """
+        self.game.print_board()
         oldBoard = [pos for pos in self.game.board]
-        state, action = self.next_move()
-        winner = self.game.make_move(action)
-        reward = self.reward(winner)
-        self.update(reward, winner, state)
+        state, action, move = self.next_move()
+        print("Color: " + action[0])
+        winner = self.game.make_move(action[0], move)
+        self.game.print_board()
+        # reward = self.reward(winner)
+        # self.update(reward, winner, state)
         if verbose:
             print("=========")
-            print(oldBoard)
-            print(action)
-            print(winner)
-            print(state)
-            print('Q value: {}'.format(self.qvalue(state)))
-            self.game.print_board()
-            print(reward)
-        return (winner, reward)
-    
+           # print(oldBoard)
+           # print(action)
+           # print(winner)
+           # print(state)
+           # print('Q value: {}'.format(self.qvalue(state)))
+           # print("Q table: " + str(self.q_table))
+           # self.game.print_board()
+           # print(reward)
+        #return (winner, reward)
+
     def next_move(self):
         """Selects next move in MDP following e-greedy strategy."""
         states, actions = self.game.get_open_moves()
+
+        for i in range(len(states)):
+            state = states[i]
         # Exploit
         i = self.optimal_next(states)
+        print("Acoes possiveis: " + str(actions))
         if np.random.random_sample() < self.epsilon:
             # Explore
-            i = np.random.randint(0, len(states))
-        return states[i], actions[i]
+            i = np.random.randint(1, len(states))
+
+        print("Indice Move selecionado: " + str(i))
+        action_index, move = self.get_action_move(actions,i)
+        print("Acao: " + str(action_index+1) + "ª")
+        print("Move: " + str(move))
+        return states[i-1], actions[action_index], move
 
     def optimal_next(self, states):
         """Selects optimal next move.
@@ -90,14 +112,14 @@ class Agent(object):
         Output
         - index of next state that produces maximum value
         """
-        values = [self.qvalue(s) for s in states]
-        # Exploit
-        if self.game.player == self.player:
-            # Optimal move is max
-            return self.argmax(values)
-        else:
-            # Optimal move is min
-            return self.argmin(values)
+        values = []
+        max = 0
+        for i in range(len(states)):
+            if self.count_pieces_state(states[i]) > max:
+                values.append(i+1)
+
+        # values = [self.qvalue(s) for s in states]
+        return self.choose_max_state(values)
 
     def reward(self, winner):
         """Calculates reward for different end game conditions.
