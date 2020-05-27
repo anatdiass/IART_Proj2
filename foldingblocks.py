@@ -24,6 +24,7 @@ class FoldingBlocks():
         self.width = 4
         self.height = 4
         self.board[0][3] = "R"
+        self.board[0][0] = "A"
         self.define_blocks()
 
     def borderlines(self):
@@ -338,18 +339,20 @@ class FoldingBlocks():
 
     def is_valid_move(self, color, move):
         all_moves = self.get_next_valid_moves()
+        found = False
+
         for i in range(len(all_moves)):
             for block_move in all_moves[i]:
-                found = False
+                print(block_move)
                 if block_move[0] == color:
                     block_positions = [x[1] for x in all_moves if x[0] == color]
                     if move in block_positions[0]:
                         found = True
         
-                if found == False:
-                    return False
-                else:
-                    return True
+        if found == False:
+            return False
+        else:
+            return True
         
         return False
     
@@ -357,15 +360,23 @@ class FoldingBlocks():
         if move == 1:
             if self.is_valid_move(color,move):
                 self.reflexion_block_right(color)
+            else:
+                print("Invalid move!\n")
         if move == 2:
             if self.is_valid_move(color,move):
                 self.reflexion_block_left(color)
+            else:
+                print("Invalid move!\n")
         if move == 3:
             if self.is_valid_move(color, move):
                 self.reflexion_block_down(color)
+            else:
+                print("Invalid move!\n")
         if move == 4:
             if self.is_valid_move(color, move):
                 self.reflexion_block_up(color)
+            else:
+                print("Invalid move!\n")
         
         self.define_blocks()
 
@@ -388,6 +399,7 @@ class FoldingBlocks():
         ch = sys.stdin.read(1)
         return ch
 
+
 fold = FoldingBlocks()
 
 fold.print_instructions()
@@ -403,11 +415,11 @@ fold.make_move("R",1)
 fold.print_board()
 print("Color: ")
 color = fold.read_color()
-# print("Color choosen:" + color)
+print("Color choosen:" + color)
 print("Move: ")
 sys.stdin.flush()
 move = int(fold.read_input())
-fold.make_move("R", move)
+fold.make_move(color, move)
 fold.print_board()
 
 
