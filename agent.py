@@ -10,11 +10,11 @@ import sys
 
 #class Agent(object):
 class Agent():
-    def __init__(self, game, q_table=dict(), player='X', learning_rate=5e-1, discount=9e-1, epsilon=5e-1):
+    def __init__(self, game, q_table=dict(), player=(" ", 0), learning_rate=5e-1, discount=9e-1, epsilon=5e-1):
         """Initialize agent with properties
         - qtable is json table with Q values Q(s,a)
         - game is reference to game being played
-        - player is what player the agent is 'X' or 'O'
+        - player -> (color, move)
         - learning_rate is alpha value for gradient update
         - discount is discount factor for future expected rewards
         - epsilon is probability of exploration in epsilon greedy strategy
