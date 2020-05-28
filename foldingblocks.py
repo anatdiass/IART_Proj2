@@ -438,21 +438,25 @@ class FoldingBlocks():
     def make_move(self, color, move):
         if move == 1:
             if self.is_valid_move(color,move):
+                print("\nMove 1")
                 self.reflexion_block_right(color)
             else:
                 print("Invalid move!\n")
         if move == 2:
             if self.is_valid_move(color,move):
+                print("\nMove 2")
                 self.reflexion_block_left(color)
             else:
                 print("Invalid move!\n")
         if move == 3:
             if self.is_valid_move(color, move):
+                print("\nMove 3")
                 self.reflexion_block_down(color)
             else:
                 print("Invalid move!\n")
         if move == 4:
             if self.is_valid_move(color, move):
+                print("\nMove 4")
                 self.reflexion_block_up(color)
             else:
                 print("Invalid move!\n")
@@ -545,6 +549,7 @@ class FoldingBlocks():
                 self.board = self.test_board
                 self.print_board()
                 self.show(self.test_board)
+                self.define_blocks()
                 #self.reset()
                 #self.print_board()
 
