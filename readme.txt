@@ -1,0 +1,3 @@
+-Abrir terminal no diretorio principal do jogo
+-Fazer python main.py
+-Escolher entre a opção 1 (Q-learning) e a 2 (Sarsa)
