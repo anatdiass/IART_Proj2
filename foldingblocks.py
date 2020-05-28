@@ -8,14 +8,12 @@ class FoldingBlocks():
         self.height = 5
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.blocks = []
-        self.player = (" ", 0)  #(color, move)
         self.winner = None
         self.create()
 
     def reset(self):
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.winner = None
-        self.player = (" ", 0)  #(color, move)
         self.create()
 
     def first_color_with_moves(self):
@@ -36,16 +34,12 @@ class FoldingBlocks():
                 self.board[x][y] = " "
                 
         # LEVEL 1      
-        self.width = 4
-        self.height = 4
-        self.board[0][3] = "R"
+        self.width = 2
+        self.height = 2
         self.board[0][0] = "A"
-        self.board[2][2] = "C"
         self.define_blocks()
         
-        first_color = self.first_color_with_moves()[0]
-        first_move = self.first_color_with_moves()[1]
-        self.player = (first_color, first_move)
+
 
     def borderlines(self):
         string = "   ."
@@ -131,9 +125,10 @@ class FoldingBlocks():
             block = self.blocks[i]
             positions = block[1]
             for j in range(len(positions)):
-                position = positions[j]
-                if position[0] == x and position[1] == y:
-                    self.blocks[i][1].remove(position)
+                if j<len(positions):
+                    position = positions[j]
+                    if position[0] == x and position[1] == y:
+                        self.blocks[i][1].remove(position)
 
     def define_blocks(self):
         for y in range(self.height):
@@ -409,6 +404,11 @@ class FoldingBlocks():
         
         self.define_blocks()
 
+        if self.end_game():
+            return self.is_win()
+
+        return None
+
     def print_instructions(self):
         print('=======================================================\n'
             'How to play:\n\n'
@@ -451,6 +451,8 @@ class FoldingBlocks():
     def get_open_moves(self):
         actions = self.get_next_valid_moves()
         states = []
+
+       # print("ACOES: " + str(actions))
     
         for i in range(len(actions)):
             action = actions[i]
@@ -458,12 +460,20 @@ class FoldingBlocks():
             moves = action[1]
             for i in range(len(moves)):
                 move = moves[i]
+               # print("Move: " + str(move))
                 self.make_move(color, move)
+                #self.print_board()
                 st = self.get_state(self.board)
                 states.append(st)
                 self.reset()
+                #self.print_board()
 
         return states, actions
+
+    def end_game(self):
+        if len(self.get_next_valid_moves()) == 0:
+            return True
+        return False
 
     def is_win(self):
         for y in range(self.height):

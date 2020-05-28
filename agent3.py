@@ -20,7 +20,6 @@ class Agent(object):
         """
         self.game = game
         self.q_table = q_table
-        self.player = game.player
         self.learning_rate = learning_rate
         self.discount = discount
         self.epsilon = epsilon
@@ -33,6 +32,14 @@ class Agent(object):
 
     def choose_max_state(self, values):
         return np.random.choice(values)
+
+    def get_state_index(self, state):
+        states, actions = self.game.get_open_moves()
+
+        for i in range(len(states)):
+            st = states[i]
+            if state == st:
+                return i
 
     def get_action_move(self, actions, state_index):
         prev_sum = 0
@@ -58,7 +65,7 @@ class Agent(object):
                     count = count + 1
         return count
 
-    def step(self, verbose=True):
+    def step(self, verbose=False):
         """Agent makes one step.
         - Deciding optimal or random action following e-greedy strategy given current state
         - Taking selected action and observing next state
@@ -69,26 +76,25 @@ class Agent(object):
         self.game.print_board()
         oldBoard = [pos for pos in self.game.board]
         state, action, move = self.next_move()
-        print("Color: " + action[0])
+        state_index = self.get_state_index(state)
         winner = self.game.make_move(action[0], move)
-        self.game.print_board()
-        # reward = self.reward(winner)
-        # self.update(reward, winner, state)
+        reward = self.reward(winner)
+        self.update(reward, winner, state)
         if verbose:
             print("=========")
-           # print(oldBoard)
-           # print(action)
-           # print(winner)
-           # print(state)
-           # print('Q value: {}'.format(self.qvalue(state)))
-           # print("Q table: " + str(self.q_table))
-           # self.game.print_board()
-           # print(reward)
-        #return (winner, reward)
+            print(oldBoard)
+            print(action)
+            print("Winner: " + str(winner))
+            print(state)
+            print('Q value: {}'.format(self.qvalue(state_index)))
+            self.game.print_board()
+            print("Reward: " + str(reward))
+        return (winner, reward)
 
     def next_move(self):
         """Selects next move in MDP following e-greedy strategy."""
         states, actions = self.game.get_open_moves()
+        print("STATES: " + str(states))
 
         for i in range(len(states)):
             state = states[i]
@@ -98,7 +104,6 @@ class Agent(object):
         if np.random.random_sample() < self.epsilon:
             # Explore
             i = np.random.randint(1, len(states))
-
         print("Indice Move selecionado: " + str(i))
         action_index, move = self.get_action_move(actions,i)
         print("Acao: " + str(action_index+1) + "ª")
@@ -126,29 +131,42 @@ class Agent(object):
         - win is 1.0
         - loss is -1.0
         - draw and unfinished is 0.0
-        """
+    
         opponent = 'O' if self.player == 'X' else 'X'
         if (winner == self.player):
             return 1.0
         elif (winner == opponent):
             return -1.0
         else:
+            return 0"""
+        if winner == None:   # winner = none --> not endgame
             return 0
+        elif winner == True:
+            return 1.0
+        else:
+            return -1.0 
+
 
     def update(self, reward, winner, state):
         """Updates q-value.
         Update uses recorded observations of performing a
         certain action in a certain state and continuing optimally from there.
         """
+
+        print("STATE: " + str(state))
         # Finding estimated future value by finding max(Q(s', a'))
         # If terminal condition is reached, future reward is 0
         future_val = 0
-        if not winner:
+        state_index = self.get_state_index(state)
+        # state_index = 0
+        if winner == None:
             future_states, _ = self.game.get_open_moves()
             i = self.optimal_next(future_states)
-            future_val = self.qvalue(future_states[i])
+            future_state = future_states[i-1]
+            future_st_index = self.get_state_index(future_state)
+            future_val = self.qvalue(future_st_index)
         # Q-value update
-        self.q_table[state] = ((1 - self.learning_rate) * self.qvalue(state)) + (self.learning_rate * (reward + self.discount * future_val))
+        self.q_table[state_index] = ((1 - self.learning_rate) * self.qvalue(state_index)) + (self.learning_rate * (reward + self.discount * future_val))
 
     def train(self, episodes, history=[]):
         """Trains by playing against self.
@@ -166,7 +184,7 @@ class Agent(object):
             while(game_active):
                 winner, reward = self.step()
                 episode_reward += reward
-                if winner:
+                if winner!=None:
                     game_active = False
                     self.game.reset()
             total_reward += episode_reward

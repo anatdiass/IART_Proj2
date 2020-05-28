@@ -13,9 +13,9 @@ from agent import Agent
 def play():
         game = FoldingBlocks()
         agent = Agent(game)
-        agent.step()
-       # history = agent.train(10000)
-       # print('After 10000 Episodes')
+        #agent.step()
+        history = agent.train(1)
+        print('After 1 Episodes')
 
         # agent.stats()
 
