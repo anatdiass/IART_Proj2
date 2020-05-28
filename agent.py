@@ -107,7 +107,7 @@ class Agent(object):
         """Selects next move in MDP following e-greedy strategy."""
         print("CURRENT STATE: " + str(self.game.get_state(self.game.board)))
         states, actions = self.game.get_open_moves()
-        print("STATES: " + str(states))
+        print("STATES next moves: " + str(states))
 
         for i in range(len(states)):
             state = states[i]
@@ -196,6 +196,8 @@ class Agent(object):
             while(i<2):
                 print("----STEP " + str(i) + "----")
                 winner, reward = self.step()
+                print("Winner: " + str(winner))
+                print("reward: " + str(reward))
                 episode_reward += reward
                 if len(self.game.get_next_valid_moves()) == 0:
                     game_active = False

@@ -276,6 +276,56 @@ class FoldingBlocks():
                     return False
         return True
 
+    def reflexion_right(self, board, piece_color):
+        block = self.get_block(piece_color)
+        nr_pieces = len(block[1])
+        index_most_right_cell = self.get_most_right_cell(block[1])
+
+        for i in range(nr_pieces):
+            piece = block[1][i]  # piece.first -> x, piece.second->y
+            piece_x = piece[0]
+            dist_to_mrc = index_most_right_cell - piece_x
+            delta_x = (2 * dist_to_mrc) + 1
+            board[piece_x + delta_x][piece[1]] = piece_color
+
+    def reflexion_left(self, board, piece_color):
+        block = self.get_block(piece_color)
+        nr_pieces = len(block[1])
+        index_most_left_cell = self.get_most_left_cell(block[1])
+
+        for i in range(nr_pieces):
+            piece = block[1][i]  # piece.first -> x, piece.second->y
+            piece_x = piece[0]
+            dist_to_mlc = piece_x - index_most_left_cell
+            delta_x = (2 * dist_to_mlc) + 1
+            board[piece_x - delta_x][piece[1]] = piece_color
+
+    def reflexion_up(self, board, piece_color):
+        block = self.get_block(piece_color)
+        nr_pieces = len(block[1])
+
+        index_most_up_cell = self.get_most_up_cell(block[1])
+
+        for i in range(nr_pieces):
+            piece = block[1][i]  # piece.first -> x, piece.second->y
+            piece_y = piece[1]
+            dist_to_muc = piece_y - index_most_up_cell
+            delta_y = (2 * dist_to_muc) + 1
+            board[piece[0]][piece_y - delta_y] = piece_color
+
+    def reflexion_down(self, board, piece_color):
+        block = self.get_block(piece_color)
+        nr_pieces = len(block[1])
+
+        index_most_down_cell = self.get_most_down_cell(block[1])
+
+        for i in range(nr_pieces):
+            piece = block[1][i]  # piece.first -> x, piece.second->y
+            piece_y = piece[1]
+            dist_to_muc = index_most_down_cell - piece_y
+            delta_y = (2 * dist_to_muc) + 1
+            board[piece[0]][piece_y + delta_y] = piece_color
+
     def reflexion_block_right(self, piece_color):
         block = self.get_block(piece_color)
         nr_pieces = len(block[1])
@@ -453,6 +503,7 @@ class FoldingBlocks():
         states = []
 
        # print("ACOES: " + str(actions))
+        test_board = self.board
     
         for i in range(len(actions)):
             action = actions[i]
@@ -460,12 +511,21 @@ class FoldingBlocks():
             moves = action[1]
             for i in range(len(moves)):
                 move = moves[i]
+                if move == 1:
+                    self.reflexion_right(test_board, color)
+                elif move == 2:
+                    self.reflexion_left(test_board, color)
+                elif move == 3:
+                    self.reflexion_down(test_board, color)
+                elif move == 4:
+                    self.reflexion_up(test_board, color)
                # print("Move: " + str(move))
-                self.make_move(color, move)
+                # self.make_move(color, move)
                 #self.print_board()
-                st = self.get_state(self.board)
+                st = self.get_state(test_board)
                 states.append(st)
-                self.reset()
+                test_board = self.board
+                #self.reset()
                 #self.print_board()
 
         return states, actions
