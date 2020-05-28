@@ -65,7 +65,7 @@ class Agent(object):
                     count = count + 1
         return count
 
-    def step(self, verbose=False):
+    def step(self, verbose=True):
         """Agent makes one step.
         - Deciding optimal or random action following e-greedy strategy given current state
         - Taking selected action and observing next state
@@ -74,20 +74,14 @@ class Agent(object):
         - Returns game status
         """
 
-        print("\n\n***Board init***")
         self.game.print_board()
-        print("Jogadas antes do passo: " + str(self.game.get_next_valid_moves()))
 
         oldBoard = [pos for pos in self.game.board]
         state, action, move = self.next_move()
         state_index = self.get_state_index(state)
         winner = self.game.make_move(action[0], move)
-
-        print("\n\n***Board final***")
-        self.game.print_board()
+        #self.game.print_board()
         states, _ = self.game.get_open_moves()
-        print("CURRENT STATE: " + str(self.game.get_state(self.game.board)))
-        print("STATES: " + str(states))
 
         reward = self.reward(winner)
         self.update(reward, winner, state)
@@ -105,22 +99,16 @@ class Agent(object):
 
     def next_move(self):
         """Selects next move in MDP following e-greedy strategy."""
-        print("CURRENT STATE: " + str(self.game.get_state(self.game.board)))
         states, actions = self.game.get_open_moves()
-        print("STATES next moves: " + str(states))
 
         for i in range(len(states)):
             state = states[i]
         # Exploit
         i = self.optimal_next(states)
-        print("Acoes possiveis: " + str(actions))
         if np.random.random_sample() < self.epsilon:
             # Explore
             i = np.random.randint(1, len(states))
-        print("Indice Move selecionado: " + str(i))
         action_index, move = self.get_action_move(actions,i)
-        print("Acao: " + str(action_index+1) + "ª")
-        print("Move: " + str(move))
         return states[i-1], actions[action_index], move
 
     def optimal_next(self, states):
@@ -192,25 +180,18 @@ class Agent(object):
             episode_reward = 0.0
             game_active = True
             # Rest of game follows strategy
-            i = 0
-            while(i<2):
-                print("----STEP " + str(i) + "----")
+            while(game_active):
                 winner, reward = self.step()
-                print("Winner: " + str(winner))
-                print("reward: " + str(reward))
                 episode_reward += reward
                 if len(self.game.get_next_valid_moves()) == 0:
                     game_active = False
                     self.game.reset()
-                    print("Fim")
-                    return 0
-                i = i+1
             total_reward += episode_reward
             cumulative_reward.append(total_reward)
             memory.append(sys.getsizeof(self.q_table) / 1024)
             # Record total reward agent gains as training progresses
-            #if (i % (episodes / 10) == 0) and (i >= (episodes / 10)):
-             #   print('.')
+            if (i % (episodes / 10) == 0) and (i >= (episodes / 10)):
+               print('.')
         history.append(x)
         history.append(cumulative_reward)
         history.append(memory)

@@ -37,6 +37,7 @@ class FoldingBlocks():
         # LEVEL 1      
         self.width = 2
         self.height = 2
+        self.board[0][1] = "C"
         self.board[0][0] = "A"
         self.define_blocks()
         
@@ -530,8 +531,6 @@ class FoldingBlocks():
                 #self.print_board()
                 st = self.get_state(self.board)
                 states.append(st)
-                print("\nBOARD: " )
-                self.print_board()
                 self.board = test_board
                 #self.reset()
                 #self.print_board()
