@@ -1,3 +1,6 @@
 -Abrir terminal no diretorio principal do jogo
--Fazer python main.py
+-Iniciar o gym 
+    ->Exemplo: conda activate gym
+-Executar o comando python main.py
+-Selecionar o nível que pretende
 -Escolher entre a opção 1 (Q-learning) e a 2 (Sarsa)
