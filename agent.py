@@ -70,15 +70,19 @@ class Agent(object):
         oldBoard = [pos for pos in self.game.board]
         state, action, move = self.next_move()
         print("Color: " + action[0])
-        winner = self.game.make_move(action[0], move)
+        winner = self.game.is_win()
+        """print("Winner: \n" )
+        for x in range(len(winner)): 
+            print(winner[x]) """
+        
         self.game.print_board()
         # reward = self.reward(winner)
         # self.update(reward, winner, state)
         if verbose:
             print("=========")
-           # print(oldBoard)
+            #print(oldBoard)
            # print(action)
-           # print(winner)
+            #print(winner)
            # print(state)
            # print('Q value: {}'.format(self.qvalue(state)))
            # print("Q table: " + str(self.q_table))
@@ -147,8 +151,13 @@ class Agent(object):
             future_states, _ = self.game.get_open_moves()
             i = self.optimal_next(future_states)
             future_val = self.qvalue(future_states[i])
+            print("i: " + i)
+            print("future_val: " + future_val)
         # Q-value update
         self.q_table[state] = ((1 - self.learning_rate) * self.qvalue(state)) + (self.learning_rate * (reward + self.discount * future_val))
+        print("q_table: " + self.q_table[state])
+        
+        
 
     def train(self, episodes, history=[]):
         """Trains by playing against self.
