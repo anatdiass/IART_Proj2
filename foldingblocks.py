@@ -505,14 +505,15 @@ class FoldingBlocks():
         states = []
 
        # print("ACOES: " + str(actions))
-        test_board = self.board
+        
     
         for i in range(len(actions)):
             action = actions[i]
             color = action[0]
             moves = action[1]
+            test_board = self.board
             for j in range(len(moves)):
-                print("j: " + str(j))
+                #print("j: " + str(j))
                 move = moves[j]
                 """if move == 1:
                     self.reflexion_right(self.test_board, color)
