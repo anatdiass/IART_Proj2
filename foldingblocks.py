@@ -4,8 +4,8 @@ import sys
 # class FoldingBlocks(Game):
 class FoldingBlocks():
     def __init__(self):
-        self.width = 5
-        self.height = 5
+        self.width = 10
+        self.height = 10
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.test_board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.blocks = []
@@ -38,10 +38,11 @@ class FoldingBlocks():
                 self.test_board[x][y] = " "
                 
         # LEVEL 1      
-        self.width = 4
+        """self.width = 4
         self.height = 4
         self.board[0][0] = "A"
         self.test_board[0][0] = "A"
+        """
         
         
         """self.width = 2
@@ -50,7 +51,7 @@ class FoldingBlocks():
         self.test_board[0][0] = "A"
         """
         
-        """self.width = 8
+        self.width = 8
         self.height = 4
         self.board[0][0] = "A"
         self.test_board[0][0] = "A"
@@ -67,7 +68,7 @@ class FoldingBlocks():
         self.test_board[6][3] = "V"
         self.board[7][3] = "V"
         self.test_board[7][3] = "V"
-        """
+        
         
         """self.width = 4
         self.height = 4
