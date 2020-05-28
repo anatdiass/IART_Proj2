@@ -23,12 +23,11 @@ class Agent(object):
         self.learning_rate = learning_rate
         self.discount = discount
         self.epsilon = epsilon
-        self.epsilon = epsilon
         self.algorithm = algorithm
 
         
     def qvalue(self, state):
-        if state not in self.q_table: 
+        if state not in self.q_table:
             # Initialize Q-value at 0
             self.q_table[state] = 0.0
         return self.q_table[state]
@@ -80,17 +79,28 @@ class Agent(object):
         """
 
         self.game.print_board()
-        states, actions = self.game.get_open_moves()
+        
+        print("Antes get_open_moves: " )
+        self.game.print_board()
+        states, actions, winner  = self.game.get_open_moves()
+        print("Depois get_open_moves: " )
+        self.game.print_board()
+        
+        
 
         oldBoard = self.game.get_state(self.game.board)
         state, action, move = self.next_move(states, actions)
+        #self.game.print_board()
+        
         state_index = self.get_state_index(state, states)
-        winner = self.game.make_move(action[0], move)
+        #self.game.print_board()
+        #winner = self.game.make_move(action[0], move)
+        #self.game.print_board()
         reward = self.reward(winner)
+        self.game.print_board()
+        #self.update(reward, winner, state, states, actions)
 
-        self.update(reward, winner, state, states, actions)
-
-        if verbose:
+        """if verbose:
             print("=========")
             print("Previous state: " + str(oldBoard))
             print("Action: " + str(action))
@@ -99,24 +109,33 @@ class Agent(object):
             print("Current state: " + str(state))
             print('Q value: {}'.format(self.qvalue(state_index)))
             self.game.print_board()
-            print("Reward: " + str(reward))
+            print("Reward: " + str(reward))"""
         return (winner, reward)
 
     def next_move(self, states, actions):
-        print("Antes get_open_moves: " )
-        self.game.print_board()
+        
         """Selects next move in MDP following e-greedy strategy."""
-        print("Depois get_open_moves: " )
-        self.game.print_board()
+        
         for i in range(len(states)):
             state = states[i]
         # Exploit
         i = self.optimal_next(states)
         if np.random.random_sample() < self.epsilon and len(states)>0:
             # Explore
-            i = np.random.randint(1, len(states))
+            if len(states) < 1:
+                print("\nstates low: " + str(len(states)))
+                i = np.random.randint(len(states),1)
+            elif len(states) == 1:
+                print("\nstates equal: " + str(len(states)))
+                i = 1
+            else:
+                print("\nstates high: " + str(len(states)))
+                i = np.random.randint(1, len(states))
         action_index, move = self.get_action_move(actions,i)
-        return states[i-1], actions[action_index], move
+        if not states:
+            return states[0], actions[action_index], move
+        else:
+            return states[i-1], actions[action_index], move
 
     def optimal_next(self, states):
         """Selects optimal next move.
@@ -166,19 +185,19 @@ class Agent(object):
         state_index = self.get_state_index(state, states)
         # state_index = 0
         if winner == None:
-            future_states, _ = self.game.get_open_moves()
+            #future_states, _ = self.game.get_open_moves()
+            future_states = states
             i = self.optimal_next(future_states)
             future_state = future_states[i-1]
             future_st_index = self.get_state_index(future_state, future_states)
             future_val = self.qvalue(future_st_index)
         # Q-value update
-        if self.algorithm is "1": 
-            self.q_table[state_index] = ((1 - self.learning_rate) * self.qvalue(state_index)) + (self.learning_rate * (reward + self.discount * future_val))
-        
-        if self.algorithm is "2": 
-            future_state = future_states[0]
+        if  self.algorithm is "1":
             self.q_table[state_index] = ((1 - self.learning_rate) * self.qvalue(state_index)) + (self.learning_rate * (reward + self.discount * future_val))
 
+        if  self.algorithm is "2":
+            future_state = future_states[0]
+            self.q_table[state_index] = ((1 - self.learning_rate) * self.qvalue(state_index)) + (self.learning_rate * (reward + self.discount * future_val))
 
     def train(self, episodes, history=[]):
         """Trains by playing against self.
@@ -225,7 +244,7 @@ class Agent(object):
         for i in range(episodes):
             game_active = True
             while(game_active):
-                states, actions = self.game.get_open_moves()
+                states, actions, _ = self.game.get_open_moves()
                 i = self.optimal_next(states)
                 winner = self.game.make_move(actions[i])
                 if winner:
@@ -245,5 +264,4 @@ class Agent(object):
         """Save Q values to json."""
         with open(path, 'w') as out:
             json.dump(self.q_table, out)
-
 

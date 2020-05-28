@@ -513,6 +513,7 @@ class FoldingBlocks():
         print("\n\n FUNCAO OPEN MOVES \n\n")
         actions = self.get_next_valid_moves()
         states = []
+        winner = None
 
         print("ACOES: " + str(actions))
         
@@ -538,7 +539,7 @@ class FoldingBlocks():
                 self.print_board()
                 self.show(self.test_board)
 
-                self.make_move(color, move)
+                winner = self.make_move(color, move)
                 print("\n\tChanged board (GAME / TEST)")
                 self.print_board()
                 self.show(self.test_board)
@@ -554,7 +555,7 @@ class FoldingBlocks():
                 #self.print_board()
 
         print("STATES: " + str(states))
-        return states, actions
+        return states, actions, winner
 
     def end_game(self):
         if len(self.get_next_valid_moves()) == 0:
