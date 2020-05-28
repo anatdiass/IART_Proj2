@@ -14,11 +14,11 @@ from foldingblocks import FoldingBlocks
 from agent import Agent
 
 
-def play(algorithm):
-        game = FoldingBlocks()
+def play(algorithm, level):
+        game = FoldingBlocks(level)
         agent = Agent(game, algorithm)
-        history = agent.train(1)
-        print('After 1 Episodes')
+        history = agent.train(1000)
+        print('After 1000 Episodes')
 
         rfig, raxs = plt.subplots(nrows=3, ncols=1)
         rax_reward1 = raxs[0]
@@ -62,10 +62,19 @@ def play(algorithm):
 
         agent.save_values(path='data/foldingblocks_qtable.json')
 
-        # agent.stats()
-
 def main():
         print("FOLDING BLOCKS")
+        print("Choose level:")
+        print("(1) Level 1")
+        print("(2) Level 2")
+        print("(3) Level 3")
+        print("(4) Level 4")
+        print("(5) Level 5")
+        level = input()
+        while(level!="1" and level!="2" and level!="3" and level!="4" and level!="5"):
+                print("Choose again:")
+                level = input()
+
         print("Choose an algoritm:")
         print("(1) Q-Learning")
         print("(2) Sarsa")
@@ -75,7 +84,7 @@ def main():
                 print("Choose again:")
                 alg = input()
         
-        play(alg)
+        play(alg, level)
 
 
 if __name__ == '__main__':

@@ -3,21 +3,22 @@ import sys
 
 # class FoldingBlocks(Game):
 class FoldingBlocks():
-    def __init__(self):
+    def __init__(self, level):
         self.width = 10
         self.height = 10
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.test_board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.blocks = []
         self.winner = None
-        self.create()
+        self.level = level
+        self.create(level)
         
 
     def reset(self):
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.test_board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.winner = None
-        self.create()
+        self.create(self.level)
 
     def first_color_with_moves(self):
         all_moves = self.get_next_valid_moves()
@@ -31,52 +32,50 @@ class FoldingBlocks():
 
             
 
-    def create(self):
+    def create(self, level):
         for y in range(self.height):
             for x in range(self.width):
                 self.board[x][y] = " "
                 self.test_board[x][y] = " "
                 
-        # LEVEL 1      
-        """self.width = 4
-        self.height = 4
-        self.board[0][0] = "A"
-        self.test_board[0][0] = "A"
-        """
+        # LEVEL 1 
+        if level == "1":     
+            self.width = 4
+            self.height = 4
+            self.board[0][0] = "A"
+            self.test_board[0][0] = "A"
+        elif level == "2":
+            self.width = 2
+            self.height = 2
+            self.board[0][0] = "A"
+            self.test_board[0][0] = "A"
+        elif level == "3":
+            self.width = 8
+            self.height = 4
+            self.board[0][0] = "A"
+            self.test_board[0][0] = "A"
+        elif level == "4":
+            self.board[1][0] = "B"
+            self.test_board[1][0] = "B"
+            self.board[2][0] = "B"
+            self.test_board[2][0] = "B"
         
+            self.board[3][0] = "G"
+            self.test_board[3][0] = "G"
         
-        """self.width = 2
-        self.height = 2
-        self.board[0][0] = "A"
-        self.test_board[0][0] = "A"
-        """
+            self.board[6][3] = "V"
+            self.test_board[6][3] = "V"
+            self.board[7][3] = "V"
+            self.test_board[7][3] = "V"
+        elif level == "5":
+            self.width = 4
+            self.height = 4
+            self.board[0][0] = "A"
+            self.board[3][3] = "B"
+            self.test_board[0][0] = "A"
+            self.test_board[3][3] = "B"
         
-        self.width = 8
-        self.height = 4
-        self.board[0][0] = "A"
-        self.test_board[0][0] = "A"
 
-        self.board[1][0] = "B"
-        self.test_board[1][0] = "B"
-        self.board[2][0] = "B"
-        self.test_board[2][0] = "B"
-    
-        self.board[3][0] = "G"
-        self.test_board[3][0] = "G"
-    
-        self.board[6][3] = "V"
-        self.test_board[6][3] = "V"
-        self.board[7][3] = "V"
-        self.test_board[7][3] = "V"
-        
-        
-        """self.width = 4
-        self.height = 4
-        self.board[0][0] = "A"
-        self.board[3][3] = "B"
-        self.test_board[0][0] = "A"
-        self.test_board[3][3] = "B"
-        """
         self.define_blocks()
         
 
@@ -545,51 +544,27 @@ class FoldingBlocks():
 
     def get_open_moves(self):
 
-        print("\n\n FUNCAO OPEN MOVES \n\n")
         actions = self.get_next_valid_moves()
         states = []
         winner = None
 
-        print("ACOES: " + str(actions))
         
         for i in range(len(actions)):
             action = actions[i]
             color = action[0]
             moves = action[1]
             for j in range(len(moves)):
-                #print("j: " + str(j))
                 move = moves[j]
-                print("\n\tMove: " + str(move))
-                """if move == 1:
-                    self.reflexion_right(self.test_board, color)
-                elif move == 2:
-                    self.reflexion_left(self.test_board, color)
-                elif move == 3:
-                    if self.verify_reflexion_block_down(color):
-                        print("\n AQUI\n")
-                        self.reflexion_down(self.test_board, color)
-                elif move == 4:
-                    self.reflexion_up(self.test_board, color)"""
-                print("\n\tPrevious board (GAME / TEST)")
-                self.print_board()
-                self.show(self.test_board)
+
 
                 winner = self.make_move(color, move)
-                print("\n\tChanged board (GAME / TEST)")
-                self.print_board()
-                self.show(self.test_board)
 
                 st = self.get_state(self.board)
                 states.append(st)
-                print("\n\tReset board (GAME / TEST)")
                 self.board = self.test_board
-                self.print_board()
-                self.show(self.test_board)
+     
                 self.define_blocks()
-                #self.reset()
-                #self.print_board()
 
-        print("STATES: " + str(states))
         return states, actions, winner
 
     def end_game(self):
@@ -605,47 +580,3 @@ class FoldingBlocks():
                     return False
 
         return True
-
-"""
-fold = FoldingBlocks()
-fold.print_instructions()
-fold.print_board()
-
-#next_moves = fold.get_next_valid_moves()
-#print("next moves: " + str(next_moves))
-"""
-""" TEST INPUT """
-# print("Color: ")
-# color = fold.read_color()
-# print("Color choosen:" + color)
-# print("Move: ")
-# sys.stdin.flush()
-# move = int(fold.read_input())
-# fold.make_move(color, move)
-# fold.print_board()
-
-""" TEST OPEN MOVES """
-#fold.get_open_moves()
-
-""" TEST PLAYER DEFINITION """
-# fold.first_color_with_moves()
-# define_player = fold.player
-# print("Player: " + str(define_player))
-
-"""if fold.is_win():
-   print("victory")
-else:
-    print("not victory")
-
-fold.make_move("A", 1)
-fold.make_move("A", 1)
-fold.make_move("A", 3)
-fold.make_move("R", 1)
-fold.make_move("R", 1)
-fold.make_move("R", 4)
-
-fold.print_board()
-if fold.is_win():
-    print("victory")
-else:
-    print("not victory")"""
