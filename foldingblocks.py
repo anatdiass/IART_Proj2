@@ -10,6 +10,7 @@ class FoldingBlocks():
         self.blocks = []
         self.winner = None
         self.create()
+        
 
     def reset(self):
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
@@ -497,6 +498,7 @@ class FoldingBlocks():
             line += "  |"
             print(line)
             self.borderlines()
+            
 
     def get_open_moves(self):
         actions = self.get_next_valid_moves()
@@ -509,22 +511,27 @@ class FoldingBlocks():
             action = actions[i]
             color = action[0]
             moves = action[1]
-            for i in range(len(moves)):
-                move = moves[i]
-                if move == 1:
-                    self.reflexion_right(test_board, color)
+            for j in range(len(moves)):
+                print("j: " + str(j))
+                move = moves[j]
+                """if move == 1:
+                    self.reflexion_right(self.test_board, color)
                 elif move == 2:
-                    self.reflexion_left(test_board, color)
+                    self.reflexion_left(self.test_board, color)
                 elif move == 3:
-                    self.reflexion_down(test_board, color)
+                    if self.verify_reflexion_block_down(color):
+                        print("\n AQUI\n")
+                        self.reflexion_down(self.test_board, color)
                 elif move == 4:
-                    self.reflexion_up(test_board, color)
+                    self.reflexion_up(self.test_board, color)"""
                # print("Move: " + str(move))
-                # self.make_move(color, move)
+                self.make_move(color, move)
                 #self.print_board()
-                st = self.get_state(test_board)
+                st = self.get_state(self.board)
                 states.append(st)
-                test_board = self.board
+                print("\nBOARD: " )
+                self.print_board()
+                self.board = test_board
                 #self.reset()
                 #self.print_board()
 
