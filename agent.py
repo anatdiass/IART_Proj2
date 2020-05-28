@@ -9,7 +9,7 @@ import json
 import sys
 
 class Agent(object):
-    def __init__(self, game, q_table=dict(), learning_rate=5e-1, discount=9e-1, epsilon=5e-1):
+    def __init__(self, game, algorithm, q_table=dict(), learning_rate=5e-1, discount=9e-1, epsilon=5e-1):
         """Initialize agent with properties
         - qtable is json table with Q values Q(s,a)
         - game is reference to game being played
@@ -23,9 +23,12 @@ class Agent(object):
         self.learning_rate = learning_rate
         self.discount = discount
         self.epsilon = epsilon
+        self.epsilon = epsilon
+        self.algorithm = algorithm
+
         
     def qvalue(self, state):
-        if state not in self.q_table:
+        if state not in self.q_table: 
             # Initialize Q-value at 0
             self.q_table[state] = 0.0
         return self.q_table[state]
@@ -167,7 +170,13 @@ class Agent(object):
             future_st_index = self.get_state_index(future_state)
             future_val = self.qvalue(future_st_index)
         # Q-value update
-        self.q_table[state_index] = ((1 - self.learning_rate) * self.qvalue(state_index)) + (self.learning_rate * (reward + self.discount * future_val))
+        if self.algorithm is "1": 
+            self.q_table[state_index] = ((1 - self.learning_rate) * self.qvalue(state_index)) + (self.learning_rate * (reward + self.discount * future_val))
+        
+        if self.algorithm is "2": 
+            future_state = future_states[0]
+            self.q_table[state_index] = ((1 - self.learning_rate) * self.qvalue(state_index)) + (self.learning_rate * (reward + self.discount * future_val))
+
 
     def train(self, episodes, history=[]):
         """Trains by playing against self.

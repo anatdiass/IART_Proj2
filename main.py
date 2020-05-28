@@ -14,9 +14,9 @@ from foldingblocks import FoldingBlocks
 from agent import Agent
 
 
-def play():
+def play(algorithm):
         game = FoldingBlocks()
-        agent = Agent(game)
+        agent = Agent(game, algorithm)
         history = agent.train(1)
         print('After 1 Episodes')
 """
@@ -65,7 +65,17 @@ def play():
         # agent.stats()
 
 def main():
-    play()
+        print("FOLDING BLOCKS")
+        print("Choose an algoritm:")
+        print("(1) Q-Learning")
+        print("(2) Sarsa")
+        alg = input()
+
+        while(alg!="1" and alg!="2"):
+                print("Choose again:")
+                alg = input()
+        
+        play(alg)
 
 
 if __name__ == '__main__':
