@@ -193,7 +193,7 @@ class Agent(object):
             game_active = True
             # Rest of game follows strategy
             i = 0
-            while(i<2):
+            while(game_active):
                 print("----STEP " + str(i) + "----")
                 winner, reward = self.step()
                 print("Winner: " + str(winner))
