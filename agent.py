@@ -132,10 +132,12 @@ class Agent(object):
                 print("\nstates high: " + str(len(states)))
                 i = np.random.randint(1, len(states))
         action_index, move = self.get_action_move(actions,i)
-        if not states:
-            return states[0], actions[action_index], move
-        else:
-            return states[i-1], actions[action_index], move
+        
+        print("\n States in next move: " + str(states))
+        if states == []:
+            print("\n Actions in next move: " + str(actions))
+            return [], [], move
+        return states[i-1], actions[action_index], move
 
     def optimal_next(self, states):
         """Selects optimal next move.
@@ -191,6 +193,9 @@ class Agent(object):
             future_state = future_states[i-1]
             future_st_index = self.get_state_index(future_state, future_states)
             future_val = self.qvalue(future_st_index)
+            #self.game.board = oldBoard
+            print("\n BOARD IN UPDATE: ")
+            self.game.print_board()
         # Q-value update
         if  self.algorithm is "1":
             self.q_table[state_index] = ((1 - self.learning_rate) * self.qvalue(state_index)) + (self.learning_rate * (reward + self.discount * future_val))

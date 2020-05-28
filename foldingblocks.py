@@ -42,6 +42,40 @@ class FoldingBlocks():
         self.height = 4
         self.board[0][0] = "A"
         self.test_board[0][0] = "A"
+        
+        
+        """self.width = 2
+        self.height = 2
+        self.board[0][0] = "A"
+        self.test_board[0][0] = "A"
+        """
+        
+        """self.width = 8
+        self.height = 4
+        self.board[0][0] = "A"
+        self.test_board[0][0] = "A"
+
+        self.board[1][0] = "B"
+        self.test_board[1][0] = "B"
+        self.board[2][0] = "B"
+        self.test_board[2][0] = "B"
+    
+        self.board[3][0] = "G"
+        self.test_board[3][0] = "G"
+    
+        self.board[6][3] = "V"
+        self.test_board[6][3] = "V"
+        self.board[7][3] = "V"
+        self.test_board[7][3] = "V"
+        """
+        
+        """self.width = 4
+        self.height = 4
+        self.board[0][0] = "A"
+        self.board[3][3] = "B"
+        self.test_board[0][0] = "A"
+        self.test_board[3][3] = "B"
+        """
         self.define_blocks()
         
 
