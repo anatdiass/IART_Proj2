@@ -78,7 +78,6 @@ class Agent(object):
 
         oldBoard = self.game.get_state(self.game.board)
         state, action, move = self.next_move()
-        print(self.game.print_board())
         state_index = self.get_state_index(state)
         winner = self.game.make_move(action[0], move)
         reward = self.reward(winner)
@@ -98,11 +97,12 @@ class Agent(object):
         return (winner, reward)
 
     def next_move(self):
-        print(self.game.print_board())
+        print("Antes get_open_moves: " )
+        self.game.print_board()
         """Selects next move in MDP following e-greedy strategy."""
         states, actions = self.game.get_open_moves()
-        print(self.game.print_board())
-
+        print("Depois get_open_moves: " )
+        self.game.print_board()
         for i in range(len(states)):
             state = states[i]
         # Exploit

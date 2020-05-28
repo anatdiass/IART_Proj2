@@ -7,6 +7,7 @@ class FoldingBlocks():
         self.width = 5
         self.height = 5
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
+        self.test_board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.blocks = []
         self.winner = None
         self.create()
@@ -14,6 +15,7 @@ class FoldingBlocks():
 
     def reset(self):
         self.board = [[" " for y in range(self.height)] for x in range(self.width)]
+        self.test_board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.winner = None
         self.create()
 
@@ -33,11 +35,13 @@ class FoldingBlocks():
         for y in range(self.height):
             for x in range(self.width):
                 self.board[x][y] = " "
+                self.test_board[x][y] = " "
                 
         # LEVEL 1      
         self.width = 2
         self.height = 2
         self.board[0][0] = "A"
+        self.test_board[0][0] = "A"
         self.define_blocks()
         
 
@@ -501,20 +505,21 @@ class FoldingBlocks():
             
 
     def get_open_moves(self):
+
+        print("\n\n FUNCAO OPEN MOVES \n\n")
         actions = self.get_next_valid_moves()
         states = []
 
-       # print("ACOES: " + str(actions))
+        print("ACOES: " + str(actions))
         
-    
         for i in range(len(actions)):
             action = actions[i]
             color = action[0]
             moves = action[1]
-            test_board = self.board
             for j in range(len(moves)):
                 #print("j: " + str(j))
                 move = moves[j]
+                print("\n\tMove: " + str(move))
                 """if move == 1:
                     self.reflexion_right(self.test_board, color)
                 elif move == 2:
@@ -525,15 +530,25 @@ class FoldingBlocks():
                         self.reflexion_down(self.test_board, color)
                 elif move == 4:
                     self.reflexion_up(self.test_board, color)"""
-               # print("Move: " + str(move))
+                print("\n\tPrevious board (GAME / TEST)")
+                self.print_board()
+                self.show(self.test_board)
+
                 self.make_move(color, move)
-                #self.print_board()
+                print("\n\tChanged board (GAME / TEST)")
+                self.print_board()
+                self.show(self.test_board)
+
                 st = self.get_state(self.board)
                 states.append(st)
-                self.board = test_board
+                print("\n\tReset board (GAME / TEST)")
+                self.board = self.test_board
+                self.print_board()
+                self.show(self.test_board)
                 #self.reset()
                 #self.print_board()
 
+        print("STATES: " + str(states))
         return states, actions
 
     def end_game(self):
