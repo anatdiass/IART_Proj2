@@ -73,13 +73,25 @@ class Agent(object):
         - Updating q table values using GD with derivative of MSE of Q-value
         - Returns game status
         """
+
+        print("\n\n***Board init***")
         self.game.print_board()
+        print("Jogadas antes do passo: " + str(self.game.get_next_valid_moves()))
+
         oldBoard = [pos for pos in self.game.board]
         state, action, move = self.next_move()
         state_index = self.get_state_index(state)
         winner = self.game.make_move(action[0], move)
+
+        print("\n\n***Board final***")
+        self.game.print_board()
+        states, _ = self.game.get_open_moves()
+        print("CURRENT STATE: " + str(self.game.get_state(self.game.board)))
+        print("STATES: " + str(states))
+
         reward = self.reward(winner)
         self.update(reward, winner, state)
+
         if verbose:
             print("=========")
             print(oldBoard)
@@ -93,6 +105,7 @@ class Agent(object):
 
     def next_move(self):
         """Selects next move in MDP following e-greedy strategy."""
+        print("CURRENT STATE: " + str(self.game.get_state(self.game.board)))
         states, actions = self.game.get_open_moves()
         print("STATES: " + str(states))
 
@@ -146,14 +159,12 @@ class Agent(object):
         else:
             return -1.0 
 
-
     def update(self, reward, winner, state):
         """Updates q-value.
         Update uses recorded observations of performing a
         certain action in a certain state and continuing optimally from there.
         """
 
-        print("STATE: " + str(state))
         # Finding estimated future value by finding max(Q(s', a'))
         # If terminal condition is reached, future reward is 0
         future_val = 0
@@ -181,18 +192,23 @@ class Agent(object):
             episode_reward = 0.0
             game_active = True
             # Rest of game follows strategy
-            while(game_active):
+            i = 0
+            while(i<2):
+                print("----STEP " + str(i) + "----")
                 winner, reward = self.step()
                 episode_reward += reward
-                if winner!=None:
+                if len(self.game.get_next_valid_moves()) == 0:
                     game_active = False
                     self.game.reset()
+                    print("Fim")
+                    return 0
+                i = i+1
             total_reward += episode_reward
             cumulative_reward.append(total_reward)
             memory.append(sys.getsizeof(self.q_table) / 1024)
             # Record total reward agent gains as training progresses
-            if (i % (episodes / 10) == 0) and (i >= (episodes / 10)):
-                print('.')
+            #if (i % (episodes / 10) == 0) and (i >= (episodes / 10)):
+             #   print('.')
         history.append(x)
         history.append(cumulative_reward)
         history.append(memory)
@@ -230,29 +246,4 @@ class Agent(object):
         with open(path, 'w') as out:
             json.dump(self.q_table, out)
 
-    def demo(self, first=True):
-        """Demo so users can play against trained agent."""
-        self.game.print_instructions()
-        # Agent goes first
-        game_active = True
-        while game_active:
-            winner = None
-            if first:
-                states, actions = self.game.get_open_moves()
-                i = self.optimal_next(states)
-                winner = self.game.make_move(actions[i])
-                self.game.print_board()
-                first = not first
-            elif not first:
-                print('Select move:')
-                p = self.game.read_input()
-                if self.game.is_valid_move(p):
-                    winner = self.game.make_move(p)
-                    self.game.print_board()
-                    first = not first
-                else:
-                    print('Invalid move.')
-            if winner:
-                print('Winner: {}'.format(winner))
-                game_active = False
-        self.game.reset()
+

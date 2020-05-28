@@ -15,7 +15,7 @@ def play():
         agent = Agent(game)
         #agent.step()
         history = agent.train(1)
-        print('After 1 Episodes')
+        print('After 2 Episodes')
 
         # agent.stats()
 
