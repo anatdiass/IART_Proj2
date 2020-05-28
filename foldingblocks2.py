@@ -10,6 +10,7 @@ class FoldingBlocks():
         self.test_board = [[" " for y in range(self.height)] for x in range(self.width)]
         self.blocks = []
         self.winner = None
+        self.states = []
         self.create()
         
 
@@ -38,11 +39,12 @@ class FoldingBlocks():
                 self.test_board[x][y] = " "
                 
         # LEVEL 1      
-        self.width = 4
-        self.height = 4
+        self.width = 2
+        self.height = 2
         self.board[0][0] = "A"
         self.test_board[0][0] = "A"
         self.define_blocks()
+        self.define_states()
         
 
 
@@ -196,9 +198,10 @@ class FoldingBlocks():
         index_most_right_cell = self.get_most_right_cell(block[1])
         index_most_left_cell = self.get_most_left_cell(block[1])
         comp_between_cells = index_most_right_cell - index_most_left_cell
+        filled_cells = []
 
         if (index_most_left_cell + (2 * comp_between_cells) + 1) >= self.width:
-            return False
+            return False, filled_cells
 
         else:
             # Verify the destination pieces are available
@@ -208,21 +211,25 @@ class FoldingBlocks():
                 dist_to_mrc = index_most_right_cell - piece_x
                 delta_x = abs((2 * dist_to_mrc) + 1)
                 destination_cell = self.get_color(piece_x + delta_x, piece[1])
+                destination = (piece_x+delta_x, piece[1])
                 if destination_cell != ' ' or destination_cell == '-':
-                    return False
-        return True
+                    return False, filled_cells
+                else:
+                    filled_cells.append(destination)
+        return True, filled_cells
 
     def verify_reflexion_block_left(self, piece_color):
         block = self.get_block(piece_color)
         nr_pieces = len(block[1])
         index_most_right_cell = self.get_most_right_cell(block[1])
         index_most_left_cell = self.get_most_left_cell(block[1])
+        filled_cells = []
 
         comp_between_cells = index_most_right_cell - index_most_left_cell
 
         # verify if the reflexion is possible
         if (index_most_right_cell - (2 * comp_between_cells) + 1) < 0:
-            return False
+            return False, filled_cells
         else:
             # Verify the destination pieces are available
             for i in range(nr_pieces):
@@ -231,13 +238,17 @@ class FoldingBlocks():
                 dist_to_mlc = piece_x - index_most_left_cell
                 delta_x = abs((2 * dist_to_mlc) + 1)
                 destination_cell = self.get_color(piece_x - delta_x, piece[1])
+                destination = (piece_x-delta_x,piece[1])
                 if destination_cell != ' ' or destination_cell == '-' or (piece_x-delta_x)<0:
-                    return False
-        return True
+                    return False, filled_cells
+                else:
+                    filled_cells.append(destination)
+        return True, filled_cells
 
     def verify_reflexion_block_up(self, piece_color):
         block = self.get_block(piece_color)
         nr_pieces = len(block[1])
+        filled_cells = []
 
         index_most_down_cell = self.get_most_down_cell(block[1])
         index_most_up_cell = self.get_most_up_cell(block[1])
@@ -245,7 +256,7 @@ class FoldingBlocks():
 
         # verify if the reflexion is possible
         if (index_most_down_cell - (2 * height_between_cells + 1)) < 0:
-            return False
+            return False, filled_cells
         else:
             # Verify if the destination pieces are available
             for i in range(nr_pieces):
@@ -254,13 +265,18 @@ class FoldingBlocks():
                 dist_to_muc = piece_y - index_most_up_cell
                 delta_y = (2 * dist_to_muc) + 1
                 destination_cell = self.get_color(piece[0], piece_y - delta_y)
+                destination = (piece[0],piece_y-delta_y)
                 if destination_cell != ' ' or destination_cell == '-' or (piece_y-delta_y)<0:
-                    return False
-        return True
+                    return False, filled_cells
+                else:
+                    filled_cells.append(destination)
+        return True, filled_cells
 
     def verify_reflexion_block_down(self, piece_color):
         block = self.get_block(piece_color)
         nr_pieces = len(block[1])
+
+        filled_cells = []
 
         index_most_down_cell = self.get_most_down_cell(block[1])
         index_most_up_cell = self.get_most_up_cell(block[1])
@@ -268,7 +284,7 @@ class FoldingBlocks():
 
         # verify if the reflexion is possible
         if (index_most_up_cell + (2 * height_between_cells) + 1) >= self.height:
-            return False
+            return False, filled_cells
         else:
             # Verify if the destination pieces are available
             for i in range(nr_pieces):
@@ -277,9 +293,13 @@ class FoldingBlocks():
                 dist_to_mdc = index_most_down_cell - piece_y
                 delta_y = (2 * dist_to_mdc) + 1
                 destination_cell = self.get_color(piece[0], piece_y + delta_y)
+                destination = (piece[0], piece_y+delta_y)
                 if destination_cell != ' ' or destination_cell == '-':
-                    return False
-        return True
+                    return False, filled_cells
+                else:
+                    filled_cells.append(destination)
+
+        return True, filled_cells
 
     def reflexion_right(self, board, piece_color):
         block = self.get_block(piece_color)
@@ -392,13 +412,17 @@ class FoldingBlocks():
 
     def get_block_next_valid_moves(self, color):
         valid_moves = []
-        if self.verify_reflexion_block_right(color):
+        res, _ = self.verify_reflexion_block_right(color)
+        if res == True:
             valid_moves.append(1)
-        if self.verify_reflexion_block_left(color):
+        res2, _ =  self.verify_reflexion_block_left(color)
+        if res2 == True:
             valid_moves.append(2)
-        if self.verify_reflexion_block_down(color):
+        res3, _ = self.verify_reflexion_block_down(color)
+        if res3 == True:
             valid_moves.append(3)
-        if self.verify_reflexion_block_up(color):
+        res4, _ = self.verify_reflexion_block_up(color)
+        if res4 == True:
             valid_moves.append(4)
 
         return valid_moves
@@ -438,30 +462,27 @@ class FoldingBlocks():
     def make_move(self, color, move):
         if move == 1:
             if self.is_valid_move(color,move):
-                print("\nMove 1")
                 self.reflexion_block_right(color)
             else:
                 print("Invalid move!\n")
         if move == 2:
             if self.is_valid_move(color,move):
-                print("\nMove 2")
                 self.reflexion_block_left(color)
             else:
                 print("Invalid move!\n")
         if move == 3:
             if self.is_valid_move(color, move):
-                print("\nMove 3")
                 self.reflexion_block_down(color)
             else:
                 print("Invalid move!\n")
         if move == 4:
             if self.is_valid_move(color, move):
-                print("\nMove 4")
                 self.reflexion_block_up(color)
             else:
                 print("Invalid move!\n")
         
         self.define_blocks()
+        self.define_states()
 
         if self.end_game():
             return self.is_win()
@@ -507,15 +528,52 @@ class FoldingBlocks():
             print(line)
             self.borderlines()
             
+    def define_states(self):
+        actions = self.get_next_valid_moves()
+        states = []
+        #filled_cells = []
+
+        print("ACOES: " + str(actions))
+        for i in range(len(actions)):
+            action = actions[i]
+            color = action[0]
+            moves = action[1]
+            for j in range(len(moves)):
+                move = moves[j]
+                if move == 1:
+                    _, filled_cells = self.verify_reflexion_block_right(color)
+                elif move == 2:
+                    _, filled_cells = self.verify_reflexion_block_left(color)
+                elif move == 3:
+                    _, filled_cells = self.verify_reflexion_block_down(color)
+                elif move == 4:
+                    _, filled_cells = self.verify_reflexion_block_up(color)
+
+                print("Filled_cells: " + str(filled_cells))
+                print("Len: " + str(len(filled_cells)))
+      
+                
+                for k in range(len(filled_cells)):
+                    cell = filled_cells[k]
+                    x_pos = cell[0]
+                    y_pos = cell[1]
+                    self.board[x_pos][y_pos] = color
+                    st = self.get_state(self.board)
+                    self.states.append(st)
+                    print("States: " + str(states))
+                    self.board = self.test_board
+                while len(filled_cells)>0:
+                    filled_cells.pop()
+
 
     def get_open_moves(self):
 
         print("\n\n FUNCAO OPEN MOVES \n\n")
         actions = self.get_next_valid_moves()
         states = []
-
+        #filled_cells = []
+        """
         print("ACOES: " + str(actions))
-        
         for i in range(len(actions)):
             action = actions[i]
             color = action[0]
@@ -524,37 +582,52 @@ class FoldingBlocks():
                 #print("j: " + str(j))
                 move = moves[j]
                 print("\n\tMove: " + str(move))
-                """if move == 1:
-                    self.reflexion_right(self.test_board, color)
+                if move == 1:
+                    _, filled_cells = self.verify_reflexion_block_right(color)
                 elif move == 2:
-                    self.reflexion_left(self.test_board, color)
+                    _, filled_cells = self.verify_reflexion_block_left(color)
                 elif move == 3:
-                    if self.verify_reflexion_block_down(color):
-                        print("\n AQUI\n")
-                        self.reflexion_down(self.test_board, color)
+                    _, filled_cells = self.verify_reflexion_block_down(color)
                 elif move == 4:
-                    self.reflexion_up(self.test_board, color)"""
-                print("\n\tPrevious board (GAME / TEST)")
-                self.print_board()
-                self.show(self.test_board)
+                    _, filled_cells = self.verify_reflexion_block_up(color)
 
-                self.make_move(color, move)
-                print("\n\tChanged board (GAME / TEST)")
-                self.print_board()
-                self.show(self.test_board)
+                print("Filled_cells: " + str(filled_cells))
+                print("Len: " + str(len(filled_cells)))
+                
+               # print("\n\tPrevious board (GAME / TEST)")
+                #self.print_board()
+                #self.show(self.test_board)
 
-                st = self.get_state(self.board)
-                states.append(st)
-                print("\n\tReset board (GAME / TEST)")
-                self.board = self.test_board
-                self.print_board()
-                self.show(self.test_board)
-                self.define_blocks()
+                #self.make_move(color, move)
+                #print("\n\tChanged board (GAME / TEST)")
+                #self.print_board()
+                #self.show(self.test_board)
+
+
+                #st = self.get_state(self.board)
+                #states.append(st)
+                #print("\n\tReset board (GAME / TEST)")
+                #self.board = self.test_board
+                #self.print_board()
+                #self.show(self.test_board)
                 #self.reset()
                 #self.print_board()
+                
+                for k in range(len(filled_cells)):
+                    cell = filled_cells[k]
+                    x_pos = cell[0]
+                    y_pos = cell[1]
+                    self.board[x_pos][y_pos] = color
+                    st = self.get_state(self.board)
+                    states.append(st)
+                    print("States: " + str(states))
+                    self.board = self.test_board
+                while len(filled_cells)>0:
+                    filled_cells.pop()
+                print("filled final: " + str(filled_cells))
 
-        print("STATES: " + str(states))
-        return states, actions
+        return states, actions"""
+        return self.states, actions
 
     def end_game(self):
         if len(self.get_next_valid_moves()) == 0:
