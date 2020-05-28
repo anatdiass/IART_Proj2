@@ -35,15 +35,9 @@ class FoldingBlocks():
                 self.board[x][y] = " "
                 
         # LEVEL 1      
-<<<<<<< HEAD
         self.width = 2
         self.height = 2
         self.board[0][1] = "C"
-=======
-        self.width = 4
-        self.height = 4
-        self.board[0][3] = "R"
->>>>>>> 9f3914dffe11aa57df46e11e86918c82b15b425d
         self.board[0][0] = "A"
         self.board[2][2] = "C"
         self.define_blocks()
