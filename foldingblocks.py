@@ -35,9 +35,8 @@ class FoldingBlocks():
                 self.board[x][y] = " "
                 
         # LEVEL 1      
-        self.width = 4
-        self.height = 4
-        self.board[2][2] = "C"
+        self.width = 2
+        self.height = 2
         self.board[0][0] = "A"
         self.define_blocks()
         

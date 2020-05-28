@@ -17,10 +17,9 @@ from agent import Agent
 def play():
         game = FoldingBlocks()
         agent = Agent(game)
-        #agent.step()
-        history = agent.train(10)
-        print('After 2 Episodes')
-
+        history = agent.train(1)
+        print('After 1 Episodes')
+"""
         rfig, raxs = plt.subplots(nrows=3, ncols=1)
         rax_reward1 = raxs[0]
         rax_reward1.grid()
@@ -62,7 +61,7 @@ def play():
         plt.show()
 
         agent.save_values(path='data/foldingblocks_qtable.json')
-
+"""
         # agent.stats()
 
 def main():

@@ -34,7 +34,7 @@ class Agent(object):
         return np.random.choice(values)
 
     def get_state_index(self, state):
-        states, actions = self.game.get_open_moves()
+        states, _ = self.game.get_open_moves()
 
         for i in range(len(states)):
             st = states[i]
@@ -76,30 +76,32 @@ class Agent(object):
 
         self.game.print_board()
 
-        oldBoard = [pos for pos in self.game.board]
+        oldBoard = self.game.get_state(self.game.board)
         state, action, move = self.next_move()
+        print(self.game.print_board())
         state_index = self.get_state_index(state)
         winner = self.game.make_move(action[0], move)
-        #self.game.print_board()
-        states, _ = self.game.get_open_moves()
-
         reward = self.reward(winner)
+
         self.update(reward, winner, state)
 
         if verbose:
             print("=========")
-            print(oldBoard)
-            print(action)
+            print("Previous state: " + str(oldBoard))
+            print("Action: " + str(action))
+            print("Move: " + str(move))
             print("Winner: " + str(winner))
-            print(state)
+            print("Current state: " + str(state))
             print('Q value: {}'.format(self.qvalue(state_index)))
             self.game.print_board()
             print("Reward: " + str(reward))
         return (winner, reward)
 
     def next_move(self):
+        print(self.game.print_board())
         """Selects next move in MDP following e-greedy strategy."""
         states, actions = self.game.get_open_moves()
+        print(self.game.print_board())
 
         for i in range(len(states)):
             state = states[i]
@@ -180,10 +182,13 @@ class Agent(object):
             episode_reward = 0.0
             game_active = True
             # Rest of game follows strategy
+            j = 0
             while(game_active):
+                print("\n****STEP " + str(j) + "****\n")
                 winner, reward = self.step()
+                j = j + 1
                 episode_reward += reward
-                if len(self.game.get_next_valid_moves()) == 0:
+                if winner!=None:
                     game_active = False
                     self.game.reset()
             total_reward += episode_reward
